@@ -1,6 +1,0 @@
-<Note xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://schemas.datacontract.org/2004/07/NoteKeeperXamarin.Models">
-  <Created>2019-05-31T11:26:18.1608049+02:00</Created>
-  <LastEdited>2019-05-31T11:26:18.1608064+02:00</LastEdited>
-  <Text>Foo</Text>
-  <Title>Titel</Title>
-</Note>

@@ -36,5 +36,10 @@ namespace NoteKeeperXamarin.Services
                 return obj;
             }
         }
+
+        public void DeleteFile<T>(string path)
+        {
+            File.Delete(path);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -18,27 +19,26 @@ namespace NoteKeeperXamarin.Services
 
         public T OpenFile<T>(string path)
         {
-            _serializer = new DataContractJsonSerializer(typeof(T));
-            using (var stream = File.Open(path, FileMode.Open))
+            using (StreamReader file = File.OpenText(path))
             {
-                using (var reader = JsonReaderWriterFactory.CreateJsonReader(stream, Encoding.UTF8, XmlDictionaryReaderQuotas.Max, null))
-                {
-                    T obj = (T) _serializer.ReadObject(reader);
-                    return obj;
-                }
+                JsonSerializer serializer = new JsonSerializer();
+                T obj = (T)serializer.Deserialize(file, typeof(T));
+                return obj;
             }
         }
 
         public void SaveToFile<T>(T obj, string path)
         {
-            _serializer = new DataContractJsonSerializer(typeof(T));
-            using (var stream = File.Open(path, FileMode.Create))
+            using( StreamWriter file = File.CreateText(path))
             {
-                using (var writer = JsonReaderWriterFactory.CreateJsonWriter(stream, Encoding.UTF8))
-                {
-                    _serializer.WriteObject(writer, obj);
-                }
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, obj);
             }
+        }
+
+        public void DeleteFile<T>(string path)
+        { 
+            File.Delete(path);
         }
     }
 }

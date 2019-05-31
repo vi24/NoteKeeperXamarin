@@ -9,13 +9,30 @@ namespace NoteKeeperChallenge.Tests
 {
     public class OperatorXMLServiceTest
     {
-        private readonly string PATH = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\SerializedNotes");
+        private readonly string PATH = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\SerializedNotesTest");
         private const string XML_EXTENSION = ".xml";
+
+        private void SetUp()
+        {
+            Directory.CreateDirectory(PATH);
+        }
+
+        private void TearDown()
+        {
+            DirectoryInfo dInfo = new DirectoryInfo(PATH);
+            foreach (FileInfo file in dInfo.GetFiles())
+            {
+                if (!(Path.GetExtension(file.FullName) == XML_EXTENSION)) return;
+                file.Delete();
+            }
+            Directory.Delete(PATH);
+        }
 
         [Fact]
         public void GivenXMLServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
         {
             //Arrange
+            SetUp();
             XMLStorageService storageService = new XMLStorageService();
             Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             //Act
@@ -26,12 +43,14 @@ namespace NoteKeeperChallenge.Tests
             Assert.Equal(expectedNote.Text, actualNote.Text);
             Assert.Equal(expectedNote.LastEdited.ToString(), actualNote.LastEdited.ToString());
             Assert.Equal(expectedNote.Created.ToString(), actualNote.Created.ToString());
+            TearDown();
         }
 
         [Fact]
         public void SaveWithStaticFileName_GivenXMLServiceTitleAndText_WhenOverridingOldFile_ThenCurrentLastEditedTimeShouldBeGreaterThanPreviousLastEditedTime()
         {
             //Arrange
+            SetUp();
             NoteViewModel noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
             noteViewModel.SaveWithStaticFileName("Titel", "Foo");
             long previousLastEditedFileTime = noteViewModel.Note.LastEdited.ToFileTime();
@@ -41,12 +60,14 @@ namespace NoteKeeperChallenge.Tests
             long currentLastEditedFileTime = noteViewModel.Note.LastEdited.ToFileTime();
             //Assert
             Assert.True(currentLastEditedFileTime > previousLastEditedFileTime);
+            TearDown();
         }
 
         [Fact]
         public void SaveWithStaticFileName_GivenXMLServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
         {
             //Arrange
+            SetUp();
             NoteViewModel noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
             noteViewModel.SaveWithStaticFileName("Titel", "Foo");
             long createdFileTime = noteViewModel.Note.Created.ToFileTime();
@@ -56,12 +77,14 @@ namespace NoteKeeperChallenge.Tests
             long lastEditedFileTime = noteViewModel.Note.LastEdited.ToFileTime();
             //Assert
             Assert.True(lastEditedFileTime > createdFileTime);
+            TearDown();
         }
 
         [Fact]
         public void SaveWithStaticFileName_GivenXMLServiceTitleAndText_WhenOverridingOldFile_ThenCreatedTimeShouldStayTheSame()
         {
             //Arrange
+            SetUp();
             NoteViewModel noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
             noteViewModel.SaveWithStaticFileName("Titel", "Foo");
             long expectedDateTime = noteViewModel.Note.Created.ToFileTime();
@@ -70,6 +93,7 @@ namespace NoteKeeperChallenge.Tests
             long actualDateTime = noteViewModel.Note.Created.ToFileTime();
             //Assert
             Assert.Equal(expectedDateTime, actualDateTime);
+            TearDown();
         }
 
         [Fact]
@@ -83,6 +107,7 @@ namespace NoteKeeperChallenge.Tests
         [Fact]
         public void GivenJSONServiceAndNote_WhenSavingFileAndClosingApp_ThenTheSameNoteShouldBeLoadedViaMetaDataFileNextTimeAfterOpeningApp()
         {
+            SetUp();
             NoteViewModel noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
             noteViewModel.SaveWithDynamicFileName("Titel", "Foo");
             Note expectedNote = noteViewModel.Note;
@@ -93,6 +118,7 @@ namespace NoteKeeperChallenge.Tests
             Assert.Equal(expectedNote.Text, actualNote.Text);
             Assert.Equal(expectedNote.Created.ToString(), actualNote.Created.ToString());
             Assert.Equal(expectedNote.LastEdited.ToString(), actualNote.LastEdited.ToString());
+            TearDown();
         }
     }
 }

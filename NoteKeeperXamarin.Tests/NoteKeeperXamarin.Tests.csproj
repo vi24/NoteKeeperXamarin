@@ -16,4 +16,13 @@
     <ProjectReference Include="..\NoteKeeperXamarin\NoteKeeperXamarin\NoteKeeperXamarin.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="metadata.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="metadata.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
