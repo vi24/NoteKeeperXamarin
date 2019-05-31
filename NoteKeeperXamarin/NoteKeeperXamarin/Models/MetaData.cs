@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace NoteKeeperXamarin.Model
+namespace NoteKeeperXamarin.Models
 {
     [DataContract]
     public class MetaData

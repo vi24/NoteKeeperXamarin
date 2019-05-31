@@ -16,22 +16,22 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".json";
         }
 
-        public Object OpenFile(string path, Type type)
+        public T OpenFile<T>(string path)
         {
-            _serializer = new DataContractJsonSerializer(type);
+            _serializer = new DataContractJsonSerializer(typeof(T));
             using (var stream = File.Open(path, FileMode.Open))
             {
                 using (var reader = JsonReaderWriterFactory.CreateJsonReader(stream, Encoding.UTF8, XmlDictionaryReaderQuotas.Max, null))
                 {
-                    Object obj = _serializer.ReadObject(reader);
+                    T obj = (T) _serializer.ReadObject(reader);
                     return obj;
                 }
             }
         }
 
-        public void SaveToFile(Object obj, string path, Type type)
+        public void SaveToFile<T>(T obj, string path)
         {
-            _serializer = new DataContractJsonSerializer(type);
+            _serializer = new DataContractJsonSerializer(typeof(T));
             using (var stream = File.Open(path, FileMode.Create))
             {
                 using (var writer = JsonReaderWriterFactory.CreateJsonWriter(stream, Encoding.UTF8))

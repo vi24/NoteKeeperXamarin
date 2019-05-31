@@ -1,12 +1,12 @@
-﻿using NoteKeeperXamarin.Model;
+﻿using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace NoteKeeperXamarin.Operator
+namespace NoteKeeperXamarin.ViewModels
 {
-    public class NoteKeeperOperator
+    public class NoteViewModel
     {
         private const string STATIC_FILE_NAME = "foo";
         private const string METADATA_FILE_NAME = "metadata";
@@ -17,17 +17,18 @@ namespace NoteKeeperXamarin.Operator
         public Note Note { get; private set; }
         public MetaData MetaData { get; private set; }
 
-        public NoteKeeperOperator(IStorageService service)
+        public NoteViewModel(IStorageService service)
         {
             _storageService = service;
             _noteFilesDirectory = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\SerializedNotes");
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
-        public NoteKeeperOperator(IStorageService service, string noteFilesDirectory)
+        public NoteViewModel(IStorageService service, string noteFilesDirectory)
         {
             _storageService = service;
             _noteFilesDirectory = noteFilesDirectory;
+            Directory.CreateDirectory(_noteFilesDirectory);
         }
 
         public void SaveWithStaticFileName(string title, string text)
@@ -42,7 +43,7 @@ namespace NoteKeeperXamarin.Operator
             {
                 Note = new Note(title, text, DateTime.Now, DateTime.Now);
             }
-            _storageService.SaveToFile(Note, Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName), typeof(Note));
+            _storageService.SaveToFile<Note>(Note, Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName));
         }
 
         public void SaveWithDynamicFileName(string title, string text)
@@ -56,27 +57,27 @@ namespace NoteKeeperXamarin.Operator
             {
                 Note = new Note(title, text, DateTime.Now, DateTime.Now);
             }
-            _storageService.SaveToFile(Note, GetFullPathOfDirectoryAndFileName(), typeof(Note));
+            _storageService.SaveToFile<Note>(Note, GetFullPathOfDirectoryAndFileName());
             WriteLastSavedNoteToMetaDataFile();
         }
 
         public void OpenNote(string fullPathName)
         {
             if (!File.Exists(fullPathName)) return;
-            Note = (Note)_storageService.OpenFile(fullPathName, typeof(Note));
+            Note = _storageService.OpenFile<Note>(fullPathName);
         }
         public void OpenLastSavedNote()
         {
             string pathToLastSavedNote = Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
             if (!File.Exists(pathToLastSavedNote)) return;
-            Note = (Note)_storageService.OpenFile(Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName), typeof(Note));
+            Note = _storageService.OpenFile<Note>(Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName));
         }
 
         public void OpenLastSavedNoteViaMetaData()
         {
             string pathToMetaDataFile = Path.Combine(_metaDataDirectory, METADATA_FILE_NAME + _storageService.FileExtensionName);
             if (!File.Exists(pathToMetaDataFile)) return;
-            MetaData = (MetaData)_storageService.OpenFile(pathToMetaDataFile, typeof(MetaData));
+            MetaData = _storageService.OpenFile<MetaData>(pathToMetaDataFile);
             OpenNote(Path.Combine(_noteFilesDirectory, MetaData.LastSavedNotePath));
         }
 
@@ -96,7 +97,7 @@ namespace NoteKeeperXamarin.Operator
         {
             if (Note == null) return;
             MetaData = new MetaData(GenerateFileName());
-            _storageService.SaveToFile(MetaData, Path.Combine(_metaDataDirectory, METADATA_FILE_NAME + _storageService.FileExtensionName), typeof(MetaData));
+            _storageService.SaveToFile<MetaData>(MetaData, Path.Combine(_metaDataDirectory, METADATA_FILE_NAME + _storageService.FileExtensionName));
         }
     }
 }

@@ -15,9 +15,9 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".xml";
         }
 
-        public void SaveToFile(object obj, string path, Type type)
+        public void SaveToFile<T>(T obj, string path)
         {
-            _serializer = new DataContractSerializer(type);
+            _serializer = new DataContractSerializer(typeof(T));
             using (var stream = new StreamWriter(path))
             {
                 using (var writer = new XmlTextWriter(stream) { Formatting = Formatting.Indented })
@@ -27,12 +27,12 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
-        public object OpenFile(string path, Type type)
+        public T OpenFile<T>(string path)
         {
-            _serializer = new DataContractSerializer(type);
+            _serializer = new DataContractSerializer(typeof(T));
             using (Stream stream = File.OpenRead(path))
             {
-                Object obj = _serializer.ReadObject(stream);
+                T obj = (T) _serializer.ReadObject(stream);
                 return obj;
             }
         }

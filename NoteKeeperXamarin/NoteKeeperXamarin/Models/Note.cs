@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace NoteKeeperXamarin.Model
+namespace NoteKeeperXamarin.Models
 {
     [DataContract]
     public class Note
@@ -17,6 +17,11 @@ namespace NoteKeeperXamarin.Model
 
         public Note (string title, string text, DateTime created, DateTime lastEdited)
         {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                throw new ArgumentException("Title shouldn't be empty");
+            }
+
             Title = title;
             Text = text;
             Created = created;

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteKeeperXamarin.iOS", "No
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteKeeperXamarin", "NoteKeeperXamarin\NoteKeeperXamarin\NoteKeeperXamarin.csproj", "{89CFDB50-3932-4A0D-A440-AD73784D7934}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteKeeperXamarin.Tests", "NoteKeeperXamarin.Tests\NoteKeeperXamarin.Tests.csproj", "{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,18 @@ Global
 		{89CFDB50-3932-4A0D-A440-AD73784D7934}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{89CFDB50-3932-4A0D-A440-AD73784D7934}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{89CFDB50-3932-4A0D-A440-AD73784D7934}.Release|iPhoneSimulator.Deploy.0 = Release|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Release|iPhone.Build.0 = Release|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
