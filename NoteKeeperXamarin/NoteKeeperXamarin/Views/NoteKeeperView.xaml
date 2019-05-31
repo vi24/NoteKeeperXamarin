@@ -25,6 +25,7 @@
                 </StackLayout>
             </RelativeLayout>
             <Button Text="Save" HorizontalOptions="FillAndExpand"/>
+            <Button Text="Delete" HorizontalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
