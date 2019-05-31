@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NoteKeeperXamarin.Views;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -10,7 +11,7 @@ namespace NoteKeeperXamarin
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            MainPage = new NoteKeeperView();
         }
 
         protected override void OnStart()
