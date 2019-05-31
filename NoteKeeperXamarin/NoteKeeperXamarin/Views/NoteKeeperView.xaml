@@ -7,9 +7,24 @@
              x:Class="NoteKeeperXamarin.Views.NoteKeeperView">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Label Text="Note Keeper 1.0"  FontSize="Large" HorizontalOptions="Center" Margin="50"/>
+            <Label Text="Title"/>
+            <Entry x:Name="TitelEntry"></Entry>
+            <Label Text="Text"/>
+            <Editor x:Name="TextEditor" VerticalOptions="FillAndExpand"></Editor>
+            <RelativeLayout VerticalOptions="EndAndExpand" HorizontalOptions="CenterAndExpand">
+                <StackLayout Orientation="Horizontal">
+                    <Grid>
+                        <Grid.RowDefinitions></Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
+                    </Grid>
+                    <Label Text="Created: " Grid.Row="0" Grid.Column="0" HorizontalOptions="Start"/>
+                    <Label Text="XX:XX:XX:XX:XX" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
+                    <Label Text="Last Edited: " Grid.Row="0" Grid.Column="1" HorizontalOptions="Start"/>
+                    <Label Text="XX:XX:XX:XX:XX" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
+                </StackLayout>
+            </RelativeLayout>
+            <Button Text="Save" HorizontalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
