@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NoteKeeperXamarin.Services;
+using NoteKeeperXamarin.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +17,7 @@ namespace NoteKeeperXamarin.Views
         public NoteKeeperView()
         {
             InitializeComponent();
+            this.BindingContext = new NoteViewModel(new JSONStorageService());
         }
     }
 }

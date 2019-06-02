@@ -9,9 +9,9 @@
         <StackLayout>
             <Label Text="Note Keeper 1.0"  FontSize="Large" HorizontalOptions="Center" Margin="50"/>
             <Label Text="Title"/>
-            <Entry x:Name="TitelEntry"></Entry>
+            <Entry x:Name="TitelEntry" Text="{Binding NoteTitleEntry}"></Entry>
             <Label Text="Text"/>
-            <Editor x:Name="TextEditor" VerticalOptions="FillAndExpand"></Editor>
+            <Editor x:Name="TextEditor" VerticalOptions="FillAndExpand" Text="{Binding NoteTextEditor}"></Editor>
             <RelativeLayout VerticalOptions="EndAndExpand" HorizontalOptions="CenterAndExpand">
                 <StackLayout Orientation="Horizontal">
                     <Grid>
@@ -21,10 +21,10 @@
                     <Label Text="Created: " Grid.Row="0" Grid.Column="0" HorizontalOptions="Start"/>
                     <Label Text="XX:XX:XX:XX:XX" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
                     <Label Text="Last Edited: " Grid.Row="0" Grid.Column="1" HorizontalOptions="Start"/>
-                    <Label Text="XX:XX:XX:XX:XX" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
+                    <Label Text="{Binding Note.Title}" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
                 </StackLayout>
             </RelativeLayout>
-            <Button Text="Save" HorizontalOptions="FillAndExpand"/>
+            <Button Text="Save" HorizontalOptions="FillAndExpand" Command="{Binding SaveNote}"/>
             <Button Text="Delete" HorizontalOptions="FillAndExpand"/>
         </StackLayout>
     </ContentPage.Content>

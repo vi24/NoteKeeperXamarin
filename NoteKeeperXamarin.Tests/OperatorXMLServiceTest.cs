@@ -1,4 +1,5 @@
 ﻿using NoteKeeperXamarin.Models;
+using NoteKeeperXamarin.Operator;
 using NoteKeeperXamarin.Services;
 using NoteKeeperXamarin.ViewModels;
 using System;
@@ -51,7 +52,7 @@ namespace NoteKeeperChallenge.Tests
         {
             //Arrange
             SetUp();
-            NoteViewModel noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
+            NoteOperator noteViewModel = new NoteOperator(new XMLStorageService(), PATH);
             noteViewModel.SaveWithStaticFileName("Titel", "Foo");
             long previousLastEditedFileTime = noteViewModel.Note.LastEdited.ToFileTime();
             noteViewModel.OpenLastSavedNote();
@@ -68,7 +69,7 @@ namespace NoteKeeperChallenge.Tests
         {
             //Arrange
             SetUp();
-            NoteViewModel noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
+            NoteOperator noteViewModel = new NoteOperator(new XMLStorageService(), PATH);
             noteViewModel.SaveWithStaticFileName("Titel", "Foo");
             long createdFileTime = noteViewModel.Note.Created.ToFileTime();
             noteViewModel.OpenLastSavedNote();
@@ -85,7 +86,7 @@ namespace NoteKeeperChallenge.Tests
         {
             //Arrange
             SetUp();
-            NoteViewModel noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
+            NoteOperator noteViewModel = new NoteOperator(new XMLStorageService(), PATH);
             noteViewModel.SaveWithStaticFileName("Titel", "Foo");
             long expectedDateTime = noteViewModel.Note.Created.ToFileTime();
             //Act
@@ -108,10 +109,10 @@ namespace NoteKeeperChallenge.Tests
         public void GivenJSONServiceAndNote_WhenSavingFileAndClosingApp_ThenTheSameNoteShouldBeLoadedViaMetaDataFileNextTimeAfterOpeningApp()
         {
             SetUp();
-            NoteViewModel noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
+            NoteOperator noteViewModel = new NoteOperator(new XMLStorageService(), PATH);
             noteViewModel.SaveWithDynamicFileName("Titel", "Foo");
             Note expectedNote = noteViewModel.Note;
-            noteViewModel = new NoteViewModel(new XMLStorageService(), PATH);
+            noteViewModel = new NoteOperator(new XMLStorageService(), PATH);
             noteViewModel.OpenLastSavedNoteViaMetaData();
             Note actualNote = noteViewModel.Note;
             Assert.Equal(expectedNote.Title, actualNote.Title);
