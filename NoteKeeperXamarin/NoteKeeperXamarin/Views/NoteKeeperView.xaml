@@ -19,9 +19,9 @@
                         <Grid.ColumnDefinitions></Grid.ColumnDefinitions>
                     </Grid>
                     <Label Text="Created: " Grid.Row="0" Grid.Column="0" HorizontalOptions="Start"/>
-                    <Label Text="XX:XX:XX:XX:XX" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
+                    <Label x:Name ="CreatedLabel" Text="{Binding CreatedString}" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
                     <Label Text="Last Edited: " Grid.Row="0" Grid.Column="1" HorizontalOptions="Start"/>
-                    <Label Text="{Binding Note.Title}" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
+                    <Label Text="{Binding LastEditedString}" Grid.Row="0" Grid.Column="0" HorizontalOptions="End"/>
                 </StackLayout>
             </RelativeLayout>
             <Button Text="Save" HorizontalOptions="FillAndExpand" Command="{Binding SaveNote}"/>

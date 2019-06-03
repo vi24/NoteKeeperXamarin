@@ -13,13 +13,26 @@ namespace NoteKeeperXamarin.ViewModels
     public class NoteViewModel: INotifyPropertyChanged
     {
         private NoteOperator _noteOperator;
+        private bool _canSave;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string NoteTitleEntry { get; set; }
         public string NoteTextEditor { get; set; }
-        public DateTime CreatedLabel { get; set; }
-        public DateTime LastEditedLabel { get; set; }
+        public string CreatedString
+        {
+            get
+            {
+                return _noteOperator.Note.Created.ToString();
+            }
+        }
+        public string LastEditedDateTime
+        {
+            get
+            {
+                return _noteOperator.Note.LastEdited.ToString();
+            }
+        }
         public bool CanSave
         {
             get
@@ -28,8 +41,9 @@ namespace NoteKeeperXamarin.ViewModels
                 return true;
             }
             set
-            {   
-
+            {
+                _canSave = value;
+                OnPropertyChanged("CanSave");
             }
         }
 
@@ -55,6 +69,15 @@ namespace NoteKeeperXamarin.ViewModels
         bool SaveNoteCanExecute()
         {
             return CanSave;
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            if (propertyChanged != null)
+            {
+                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
 

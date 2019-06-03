@@ -1,4 +1,5 @@
 using NoteKeeperXamarin.Models;
+using NoteKeeperXamarin.Operator;
 using NoteKeeperXamarin.Services;
 using NoteKeeperXamarin.ViewModels;
 using System;
@@ -51,13 +52,13 @@ namespace NoteKeeperChallenge.Tests
         {
             //Arrange
             SetUp();
-            NoteViewModel noteViewModel = new NoteViewModel(new JSONStorageService(), PATH);
-            noteViewModel.SaveWithStaticFileName("Titel", "Foo");
-            long previousLastEditedFileTime = noteViewModel.Note.LastEdited.ToFileTime();
-            noteViewModel.OpenLastSavedNote();
+            NoteOperator noteOperator = new NoteOperator(new JSONStorageService(), PATH);
+            noteOperator.SaveWithStaticFileName("Titel", "Foo");
+            long previousLastEditedFileTime = noteOperator.Note.LastEdited.ToFileTime();
+            noteOperator.OpenLastSavedNote();
             //Act
-            noteViewModel.SaveWithStaticFileName("Titel", "Foo");
-            long currentLastEditedFileTime = noteViewModel.Note.LastEdited.ToFileTime();
+            noteOperator.SaveWithStaticFileName("Titel", "Foo");
+            long currentLastEditedFileTime = noteOperator.Note.LastEdited.ToFileTime();
             //Assert
             Assert.True(currentLastEditedFileTime > previousLastEditedFileTime);
             TearDown();
@@ -68,13 +69,13 @@ namespace NoteKeeperChallenge.Tests
         {
             //Arrange
             SetUp();
-            NoteViewModel noteViewModel = new NoteViewModel(new JSONStorageService(), PATH);
-            noteViewModel.SaveWithStaticFileName("Titel", "Foo");
-            long createdFileTime = noteViewModel.Note.Created.ToFileTime();
-            noteViewModel.OpenLastSavedNote();
+            NoteOperator noteOperator = new NoteOperator(new JSONStorageService(), PATH);
+            noteOperator.SaveWithStaticFileName("Titel", "Foo");
+            long createdFileTime = noteOperator.Note.Created.ToFileTime();
+            noteOperator.OpenLastSavedNote();
             //Act
-            noteViewModel.SaveWithStaticFileName("Titel", "Foo");
-            long lastEditedFileTime = noteViewModel.Note.LastEdited.ToFileTime();
+            noteOperator.SaveWithStaticFileName("Titel", "Foo");
+            long lastEditedFileTime = noteOperator.Note.LastEdited.ToFileTime();
             //Assert
             Assert.True(lastEditedFileTime > createdFileTime);
             TearDown();
@@ -85,12 +86,12 @@ namespace NoteKeeperChallenge.Tests
         {
             //Arrange
             SetUp();
-            NoteViewModel noteViewModel = new NoteViewModel(new JSONStorageService(), PATH);
-            noteViewModel.SaveWithStaticFileName("Titel", "Foo");
-            long expectedDateTime = noteViewModel.Note.Created.ToFileTime();
+            NoteOperator noteOperator = new NoteOperator(new JSONStorageService(), PATH);
+            noteOperator.SaveWithStaticFileName("Titel", "Foo");
+            long expectedDateTime = noteOperator.Note.Created.ToFileTime();
             //Act
-            noteViewModel.SaveWithStaticFileName("Titel", "Foo");
-            long actualDateTime = noteViewModel.Note.Created.ToFileTime();
+            noteOperator.SaveWithStaticFileName("Titel", "Foo");
+            long actualDateTime = noteOperator.Note.Created.ToFileTime();
             //Assert
             Assert.Equal(expectedDateTime, actualDateTime);
             TearDown();
@@ -108,12 +109,12 @@ namespace NoteKeeperChallenge.Tests
         public void GivenJSONServiceAndNote_WhenSavingFileAndClosingApp_ThenTheSameNoteShouldBeLoadedViaMetaDataFileNextTimeAfterOpeningApp()
         {
             SetUp();
-            NoteViewModel noteViewModel = new NoteViewModel(new JSONStorageService(), PATH);
-            noteViewModel.SaveWithDynamicFileName("Titel", "Foo");
-            Note expectedNote = noteViewModel.Note;
-            noteViewModel = new NoteViewModel(new JSONStorageService(), PATH);
-            noteViewModel.OpenLastSavedNoteViaMetaData();
-            Note actualNote = noteViewModel.Note;
+            NoteOperator noteOperator = new NoteOperator(new JSONStorageService(), PATH);
+            noteOperator.SaveWithDynamicFileName("Titel", "Foo");
+            Note expectedNote = noteOperator.Note;
+            noteOperator = new NoteOperator(new JSONStorageService(), PATH);
+            noteOperator.OpenLastSavedNoteViaMetaData();
+            Note actualNote = noteOperator.Note;
             Assert.Equal(expectedNote.Title, actualNote.Title);
             Assert.Equal(expectedNote.Text, actualNote.Text);
             Assert.Equal(expectedNote.Created.ToString(), actualNote.Created.ToString());

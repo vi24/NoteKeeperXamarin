@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteKeeperXamarin.Android",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteKeeperXamarin.iOS", "NoteKeeperXamarin\NoteKeeperXamarin.iOS\NoteKeeperXamarin.iOS.csproj", "{92D8CED0-0799-4B05-8513-EC2D53DA5482}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteKeeperXamarin", "NoteKeeperXamarin\NoteKeeperXamarin\NoteKeeperXamarin.csproj", "{89CFDB50-3932-4A0D-A440-AD73784D7934}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoteKeeperXamarin", "NoteKeeperXamarin\NoteKeeperXamarin\NoteKeeperXamarin.csproj", "{89CFDB50-3932-4A0D-A440-AD73784D7934}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoteKeeperXamarin.Tests", "NoteKeeperXamarin.Tests\NoteKeeperXamarin.Tests.csproj", "{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoteKeeperXamarin.Tests", "NoteKeeperXamarin.Tests\NoteKeeperXamarin.Tests.csproj", "{8C8AB5B1-1153-432D-9485-8C0A6CD1E73F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
