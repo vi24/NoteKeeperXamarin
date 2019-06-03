@@ -14,25 +14,96 @@ namespace NoteKeeperXamarin.ViewModels
     {
         private NoteOperator _noteOperator;
         private bool _canSave;
+        private string _noteTitle;
+        private string _noteText;
+        private string _createdString;
+        private string _lastEditedString;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string NoteTitleEntry { get; set; }
-        public string NoteTextEditor { get; set; }
+        public string NoteTitleEntry
+        {
+            get
+            {
+                if(_noteOperator.Note == null)
+                {
+                    _noteTitle = String.Empty;
+                    return _noteTitle;
+                }
+                _noteTitle = _noteOperator.Note.Title;
+                return _noteTitle;
+            }
+            set
+            {
+                _noteTitle = value;
+                if(_noteOperator.Note != null)
+                {
+                    _noteOperator.Note.Title = _noteTitle;
+                }
+                OnPropertyChanged(nameof(NoteTitleEntry));
+            }
+        }
+        public string NoteTextEditor
+        {
+            get
+            {
+                if (_noteOperator.Note == null)
+                {
+                    _noteText = String.Empty;
+                    return _noteText;
+                }
+                _noteText = _noteOperator.Note.Text;
+                return _noteText;
+            }
+
+            set
+            {
+                _noteText = value;
+                if(_noteOperator.Note != null)
+                {
+                    _noteOperator.Note.Text = _noteText;
+                }
+                OnPropertyChanged(nameof(NoteTextEditor));
+            }
+        }
+
         public string CreatedString
         {
             get
             {
-                return _noteOperator.Note.Created.ToString();
+                if (_noteOperator.Note == null)
+                {
+                    _createdString = String.Empty;
+                    return _createdString;
+                }
+                _createdString = _noteOperator.Note.Created.ToString();
+                return _createdString;
+            }
+            set
+            {
+                _createdString = value;
+                OnPropertyChanged(nameof(CreatedString));
             }
         }
-        public string LastEditedDateTime
+        public string LastEditedString
         {
             get
             {
-                return _noteOperator.Note.LastEdited.ToString();
+                if (_noteOperator.Note == null)
+                {
+                    _lastEditedString = String.Empty;
+                    return _lastEditedString;
+                }
+                _lastEditedString = _noteOperator.Note.LastEdited.ToString();
+                return _lastEditedString;
+            }
+            set
+            {
+                _lastEditedString = value;
+                OnPropertyChanged(nameof(LastEditedString));
             }
         }
+
         public bool CanSave
         {
             get
@@ -43,12 +114,9 @@ namespace NoteKeeperXamarin.ViewModels
             set
             {
                 _canSave = value;
-                OnPropertyChanged("CanSave");
+                OnPropertyChanged(nameof(CanSave));
             }
         }
-
-        public Note Note { get; private set; }
-        public MetaData MetaData { get; private set; }
 
         public ICommand SaveNote { get; private set; }
         public ICommand DeleteNote { get; private set; }
@@ -57,8 +125,6 @@ namespace NoteKeeperXamarin.ViewModels
         {
             _noteOperator = new NoteOperator(service);
             SaveNote = new Command(SaveNoteExecute, SaveNoteCanExecute);
-            NoteTitleEntry = "Hallo";
-            NoteTextEditor = "yes";
         }
 
         void SaveNoteExecute()

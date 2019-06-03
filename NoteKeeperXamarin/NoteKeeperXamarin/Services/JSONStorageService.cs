@@ -9,7 +9,6 @@ namespace NoteKeeperXamarin.Services
 {
     public class JSONStorageService : IStorageService
     {
-        private DataContractJsonSerializer _serializer;
         public string FileExtensionName { get; }
 
         public JSONStorageService()

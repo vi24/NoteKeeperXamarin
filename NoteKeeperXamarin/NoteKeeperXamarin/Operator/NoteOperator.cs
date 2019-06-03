@@ -21,6 +21,7 @@ namespace NoteKeeperXamarin.Operator
 
         public NoteOperator(IStorageService service, string path)
         {
+            OpenLastSavedNote();
             _storageService = service;
             _noteFilesDirectory = path;
             Directory.CreateDirectory(_noteFilesDirectory);
@@ -29,7 +30,7 @@ namespace NoteKeeperXamarin.Operator
         public NoteOperator(IStorageService service)
         {
             _storageService = service;
-            _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), @"\SerializedNotes");
+            _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
