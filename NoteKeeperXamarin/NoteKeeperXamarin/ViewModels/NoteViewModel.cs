@@ -100,6 +100,8 @@ namespace NoteKeeperXamarin.ViewModels
         {
             _noteOperator.DeleteNote();
             UpdateNoteView();
+            SaveNote.ChangeCanExecute();
+            DeleteNote.ChangeCanExecute();
         }
 
         protected void OnPropertyChanged(string propertyName)

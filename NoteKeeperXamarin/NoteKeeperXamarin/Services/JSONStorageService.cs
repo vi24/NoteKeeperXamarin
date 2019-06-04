@@ -33,11 +33,18 @@ namespace NoteKeeperXamarin.Services
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.Serialize(file, obj);
             }
+            if (File.Exists(path))
+            {
+                Console.WriteLine("helo");
+            }
         }
 
         public void DeleteFile<T>(string path)
-        { 
-            File.Delete(path);
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
         }
     }
 }

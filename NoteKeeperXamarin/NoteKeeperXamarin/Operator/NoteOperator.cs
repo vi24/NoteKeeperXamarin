@@ -14,7 +14,7 @@ namespace NoteKeeperXamarin.Operator
         private const string METADATA_FILE_NAME = "metadata";
         private readonly IStorageService _storageService;
         private readonly string _noteFilesDirectory;
-        private readonly string _metaDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+        private readonly string _metaDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         public Note Note { get; set; }
         public MetaData MetaData { get; private set; }
@@ -31,6 +31,7 @@ namespace NoteKeeperXamarin.Operator
         {
             _storageService = service;
             _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
+            OpenLastSavedNote();
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
@@ -86,7 +87,7 @@ namespace NoteKeeperXamarin.Operator
 
         public void DeleteNote()
         {
-            string path = Path.Combine(_metaDataDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
+            string path = Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
             _storageService.DeleteFile<Note>(path);
             Note = null;
         }
