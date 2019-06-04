@@ -7,7 +7,7 @@
              x:Class="NoteKeeperXamarin.Views.NoteKeeperView">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Note Keeper 1.1"  FontSize="Large" HorizontalOptions="Center" Margin="50"/>
+            <Label Text="Note Keeper 1.0"  FontSize="Large" HorizontalOptions="Center" Margin="50"/>
             <Label Text="Title"/>
             <Entry x:Name="TitelEntry" Placeholder="Enter your title" Text="{Binding NoteTitleEntry, Mode=TwoWay}"></Entry>
             <Label Text="Text"/>

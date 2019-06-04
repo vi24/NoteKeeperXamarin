@@ -101,14 +101,14 @@ namespace NoteKeeperXamarin.ViewModels
 
         void SaveNoteExecute()
         {
-            _noteOperator.SaveWithDynamicFileName(NoteTitleEntry, NoteTextEditor);
+            _noteOperator.SaveWithStaticFileName(NoteTitleEntry, NoteTextEditor);
             UpdateNoteView();
             DeleteNote.ChangeCanExecute();
         }
 
         void DeleteNoteExecute()
         {
-            _noteOperator.DeleteNoteFile();
+            _noteOperator.DeleteFooNoteFile();
             _noteOperator.Note = null;
             UpdateNoteView();
             SaveNote.ChangeCanExecute();
