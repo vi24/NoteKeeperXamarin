@@ -9,9 +9,9 @@
         <StackLayout>
             <Label Text="Note Keeper 1.0"  FontSize="Large" HorizontalOptions="Center" Margin="50"/>
             <Label Text="Title"/>
-            <Entry x:Name="TitelEntry" Text="{Binding NoteTitleEntry, Mode=TwoWay}"></Entry>
+            <Entry x:Name="TitelEntry" Placeholder="Enter your title" Text="{Binding NoteTitleEntry, Mode=TwoWay}"></Entry>
             <Label Text="Text"/>
-            <Editor x:Name="TextEditor" VerticalOptions="FillAndExpand" Text="{Binding NoteTextEditor}"></Editor>
+            <Editor x:Name="TextEditor" VerticalOptions="FillAndExpand" Placeholder="Enter your text" Text="{Binding NoteTextEditor}"></Editor>
             <RelativeLayout VerticalOptions="EndAndExpand" HorizontalOptions="CenterAndExpand">
                 <StackLayout Orientation="Horizontal">
                     <Grid>

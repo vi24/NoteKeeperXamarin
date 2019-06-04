@@ -12,7 +12,7 @@ namespace NoteKeeperXamarin.ViewModels
 {
     public class NoteViewModel: INotifyPropertyChanged
     {
-        private NoteOperator _noteOperator;
+        private readonly NoteOperator _noteOperator;
         private string _noteTitle;
         private string _noteText;
         private string _createdString;
@@ -22,7 +22,7 @@ namespace NoteKeeperXamarin.ViewModels
         {
             _noteOperator = new NoteOperator(service);
             SaveNote = new Command(SaveNoteExecute, () => CanSave);
-            DeleteNote = new Command(DeleteNoteExecute, () => _noteOperator.Note != null);
+            DeleteNote = new Command(DeleteNoteExecute, () => CanDelete);
             UpdateNoteView();
         }
 
@@ -85,17 +85,15 @@ namespace NoteKeeperXamarin.ViewModels
             }
         }
 
-        public bool CanSave => !String.IsNullOrWhiteSpace(NoteTitleEntry);
         public Command SaveNote { get; private set; }
         public Command DeleteNote { get; private set; }
 
+        public bool CanSave => !String.IsNullOrWhiteSpace(NoteTitleEntry);
+        public bool CanDelete => _noteOperator.Note != null;
+
         protected void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            if (propertyChanged != null)
-            {
-                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         void SaveNoteExecute()
