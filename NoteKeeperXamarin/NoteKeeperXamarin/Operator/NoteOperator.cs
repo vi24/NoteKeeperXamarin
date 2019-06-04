@@ -88,6 +88,7 @@ namespace NoteKeeperXamarin.Operator
         {
             string path = Path.Combine(_metaDataDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
             _storageService.DeleteFile<Note>(path);
+            Note = null;
         }
 
         private string GenerateFileName()

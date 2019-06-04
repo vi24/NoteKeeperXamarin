@@ -25,7 +25,7 @@
                 </StackLayout>
             </RelativeLayout>
             <Button Text="Save" HorizontalOptions="FillAndExpand" Command="{Binding SaveNote}"/>
-            <Button Text="Delete" HorizontalOptions="FillAndExpand"/>
+            <Button Text="Delete" HorizontalOptions="FillAndExpand" Command="{Binding DeleteNote}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

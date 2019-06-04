@@ -23,6 +23,7 @@ namespace NoteKeeperXamarin.ViewModels
             _noteOperator = new NoteOperator(service);
             SaveNote = new Command(SaveNoteExecute, () => CanSave);
             DeleteNote = new Command(DeleteNoteExecute, () => _noteOperator.Note != null);
+            UpdateNoteView();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -37,10 +38,6 @@ namespace NoteKeeperXamarin.ViewModels
             set
             {
                 _noteTitle = value;
-                if(_noteOperator.Note != null)
-                {
-                    _noteOperator.Note.Title = _noteTitle;
-                }
                 OnPropertyChanged(nameof(NoteTitleEntry));
                 SaveNote.ChangeCanExecute();
             }
@@ -56,10 +53,6 @@ namespace NoteKeeperXamarin.ViewModels
             set
             {
                 _noteText = value;
-                if(_noteOperator.Note != null)
-                {
-                    _noteOperator.Note.Text = _noteText;
-                }
                 OnPropertyChanged(nameof(NoteTextEditor));
             }
         }
@@ -68,16 +61,10 @@ namespace NoteKeeperXamarin.ViewModels
         {
             get
             {
-                if (_noteOperator.Note == null)
-                {
-                    _createdString = String.Empty;
-                    return _createdString;
-                }
-                _createdString = _noteOperator.Note.Created.ToString();
                 return _createdString;
             }
 
-            set
+            private set
             {
                 _createdString = value;
                 OnPropertyChanged(nameof(CreatedString));
@@ -88,16 +75,10 @@ namespace NoteKeeperXamarin.ViewModels
         {
             get
             {
-                if (_noteOperator.Note == null)
-                {
-                    _lastEditedString = String.Empty;
-                    return _lastEditedString;
-                }
-                _lastEditedString = _noteOperator.Note.LastEdited.ToString();
                 return _lastEditedString;
             }
 
-            set
+            private set
             {
                 _lastEditedString = value;
                 OnPropertyChanged(nameof(LastEditedString));
@@ -111,15 +92,14 @@ namespace NoteKeeperXamarin.ViewModels
         void SaveNoteExecute()
         {
             _noteOperator.SaveWithStaticFileName(NoteTitleEntry, NoteTextEditor);
+            UpdateNoteView();
+            DeleteNote.ChangeCanExecute();
         }
 
         void DeleteNoteExecute()
         {
-            NoteTitleEntry = String.Empty;
-            NoteTextEditor = String.Empty;
-            CreatedString = String.Empty;
-            LastEditedString = String.Empty;
             _noteOperator.DeleteNote();
+            UpdateNoteView();
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -128,6 +108,24 @@ namespace NoteKeeperXamarin.ViewModels
             if (propertyChanged != null)
             {
                 propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void UpdateNoteView()
+        {
+            if (_noteOperator.Note != null)
+            {
+                NoteTitleEntry = _noteOperator.Note.Title;
+                NoteTextEditor = _noteOperator.Note.Text;
+                CreatedString = _noteOperator.Note.Created.ToString();
+                LastEditedString = _noteOperator.Note.LastEdited.ToString();
+            }
+            else
+            {
+                NoteTitleEntry = String.Empty;
+                NoteTextEditor = String.Empty;
+                CreatedString = String.Empty;
+                LastEditedString = String.Empty;
             }
         }
     }
