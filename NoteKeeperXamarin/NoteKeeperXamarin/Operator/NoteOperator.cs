@@ -84,6 +84,12 @@ namespace NoteKeeperXamarin.Operator
             OpenNote(Path.Combine(_noteFilesDirectory, MetaData.LastSavedNotePath));
         }
 
+        public void DeleteNote()
+        {
+            string path = Path.Combine(_metaDataDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
+            _storageService.DeleteFile<Note>(path);
+        }
+
         private string GenerateFileName()
         {
             if (Note == null) return String.Empty;
@@ -102,5 +108,7 @@ namespace NoteKeeperXamarin.Operator
             MetaData = new MetaData(GenerateFileName());
             _storageService.SaveToFile<MetaData>(MetaData, Path.Combine(_metaDataDirectory, METADATA_FILE_NAME + _storageService.FileExtensionName));
         }
+
+        
     }
 }

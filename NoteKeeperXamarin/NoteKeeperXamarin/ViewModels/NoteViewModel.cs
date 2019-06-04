@@ -13,26 +13,27 @@ namespace NoteKeeperXamarin.ViewModels
     public class NoteViewModel: INotifyPropertyChanged
     {
         private NoteOperator _noteOperator;
-        private bool _canSave;
         private string _noteTitle;
         private string _noteText;
         private string _createdString;
         private string _lastEditedString;
+
+        public NoteViewModel(IStorageService service)
+        {
+            _noteOperator = new NoteOperator(service);
+            SaveNote = new Command(SaveNoteExecute, () => CanSave);
+            DeleteNote = new Command(DeleteNoteExecute, () => _noteOperator.Note != null);
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public string NoteTitleEntry
         {
             get
-            {
-                if(_noteOperator.Note == null)
-                {
-                    _noteTitle = String.Empty;
-                    return _noteTitle;
-                }
-                _noteTitle = _noteOperator.Note.Title;
+            { 
                 return _noteTitle;
             }
+
             set
             {
                 _noteTitle = value;
@@ -41,18 +42,14 @@ namespace NoteKeeperXamarin.ViewModels
                     _noteOperator.Note.Title = _noteTitle;
                 }
                 OnPropertyChanged(nameof(NoteTitleEntry));
+                SaveNote.ChangeCanExecute();
             }
         }
+
         public string NoteTextEditor
         {
             get
             {
-                if (_noteOperator.Note == null)
-                {
-                    _noteText = String.Empty;
-                    return _noteText;
-                }
-                _noteText = _noteOperator.Note.Text;
                 return _noteText;
             }
 
@@ -79,12 +76,14 @@ namespace NoteKeeperXamarin.ViewModels
                 _createdString = _noteOperator.Note.Created.ToString();
                 return _createdString;
             }
+
             set
             {
                 _createdString = value;
                 OnPropertyChanged(nameof(CreatedString));
             }
         }
+
         public string LastEditedString
         {
             get
@@ -97,6 +96,7 @@ namespace NoteKeeperXamarin.ViewModels
                 _lastEditedString = _noteOperator.Note.LastEdited.ToString();
                 return _lastEditedString;
             }
+
             set
             {
                 _lastEditedString = value;
@@ -104,37 +104,22 @@ namespace NoteKeeperXamarin.ViewModels
             }
         }
 
-        public bool CanSave
-        {
-            get
-            {
-                if (String.IsNullOrWhiteSpace(NoteTitleEntry)) return false;
-                return true;
-            }
-            set
-            {
-                _canSave = value;
-                OnPropertyChanged(nameof(CanSave));
-            }
-        }
-
-        public ICommand SaveNote { get; private set; }
-        public ICommand DeleteNote { get; private set; }
-
-        public NoteViewModel(IStorageService service)
-        {
-            _noteOperator = new NoteOperator(service);
-            SaveNote = new Command(SaveNoteExecute, SaveNoteCanExecute);
-        }
+        public bool CanSave => !String.IsNullOrWhiteSpace(NoteTitleEntry);
+        public Command SaveNote { get; private set; }
+        public Command DeleteNote { get; private set; }
 
         void SaveNoteExecute()
         {
             _noteOperator.SaveWithStaticFileName(NoteTitleEntry, NoteTextEditor);
         }
 
-        bool SaveNoteCanExecute()
+        void DeleteNoteExecute()
         {
-            return CanSave;
+            NoteTitleEntry = String.Empty;
+            NoteTextEditor = String.Empty;
+            CreatedString = String.Empty;
+            LastEditedString = String.Empty;
+            _noteOperator.DeleteNote();
         }
 
         protected void OnPropertyChanged(string propertyName)
@@ -145,10 +130,5 @@ namespace NoteKeeperXamarin.ViewModels
                 propertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-
-
-
-        
     }
 }
