@@ -40,11 +40,8 @@ namespace NoteKeeperXamarin.Services
         }
 
         public void DeleteFile<T>(string path)
-        {
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
+        { 
+            File.Delete(path);
         }
     }
 }

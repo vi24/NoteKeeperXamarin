@@ -89,6 +89,15 @@ namespace NoteKeeperXamarin.ViewModels
         public Command SaveNote { get; private set; }
         public Command DeleteNote { get; private set; }
 
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            if (propertyChanged != null)
+            {
+                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         void SaveNoteExecute()
         {
             _noteOperator.SaveWithStaticFileName(NoteTitleEntry, NoteTextEditor);
@@ -102,15 +111,6 @@ namespace NoteKeeperXamarin.ViewModels
             UpdateNoteView();
             SaveNote.ChangeCanExecute();
             DeleteNote.ChangeCanExecute();
-        }
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            if (propertyChanged != null)
-            {
-                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
         }
 
         private void UpdateNoteView()
