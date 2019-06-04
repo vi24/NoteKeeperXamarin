@@ -18,7 +18,9 @@ namespace NoteKeeperXamarin.ViewModels
         private string _createdString;
         private string _lastEditedString;
 
-        public NoteViewModel(IStorageService service)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public NoteViewModel (IStorageService service)
         {
             _noteOperator = new NoteOperator(service);
             SaveNote = new Command(SaveNoteExecute, () => CanSave);
@@ -26,8 +28,7 @@ namespace NoteKeeperXamarin.ViewModels
             UpdateNoteView();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        #region Properties
         public string NoteTitleEntry
         {
             get
@@ -37,6 +38,7 @@ namespace NoteKeeperXamarin.ViewModels
 
             set
             {
+                if (String.IsNullOrWhiteSpace(value)) return;
                 _noteTitle = value;
                 OnPropertyChanged(nameof(NoteTitleEntry));
                 SaveNote.ChangeCanExecute();
@@ -90,6 +92,8 @@ namespace NoteKeeperXamarin.ViewModels
 
         public bool CanSave => !String.IsNullOrWhiteSpace(NoteTitleEntry);
         public bool CanDelete => _noteOperator.Note != null;
+
+        #endregion
 
         protected void OnPropertyChanged(string propertyName)
         {

@@ -16,24 +16,45 @@ namespace NoteKeeperXamarin.Operator
         private readonly string _noteFilesDirectory;
         private readonly string _metaDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-        public Note Note { get; set; }
-        public MetaData MetaData { get; private set; }
-
-        public NoteOperator(IStorageService service, string path)
-        {
-            _storageService = service;
-            _noteFilesDirectory = path;
-            OpenLastSavedNote();
-            Directory.CreateDirectory(_noteFilesDirectory);
-        }
-
         public NoteOperator(IStorageService service)
         {
-            _storageService = service;
+            if (service == null)
+            {
+                _storageService = new JSONStorageService();
+            }
+            else
+            {
+                _storageService = service;
+            }
             _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
             OpenLastSavedNote();
             Directory.CreateDirectory(_noteFilesDirectory);
         }
+
+        public NoteOperator(IStorageService service, string path)
+        {
+            if (service == null)
+            {
+                _storageService = new JSONStorageService();
+            }
+            else
+            {
+                _storageService = service;
+            }
+            if (String.IsNullOrWhiteSpace(path))
+            {
+                _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
+            }
+            else
+            {
+                _noteFilesDirectory = path;
+            }
+            OpenLastSavedNote();
+            Directory.CreateDirectory(_noteFilesDirectory);
+        }
+
+        public Note Note { get; set; }
+        public MetaData MetaData { get; private set; }
 
         public void SaveWithStaticFileName(string title, string text)
         {
@@ -70,6 +91,7 @@ namespace NoteKeeperXamarin.Operator
             if (!File.Exists(fullPathName)) return;
             Note = _storageService.OpenFile<Note>(fullPathName);
         }
+
         public void OpenLastSavedNote()
         {
             string pathToLastSavedNote = Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
@@ -110,7 +132,5 @@ namespace NoteKeeperXamarin.Operator
             MetaData = new MetaData(GenerateFileName());
             _storageService.SaveToFile<MetaData>(MetaData, Path.Combine(_metaDataDirectory, METADATA_FILE_NAME + _storageService.FileExtensionName));
         }
-
-        
     }
 }
