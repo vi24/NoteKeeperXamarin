@@ -27,7 +27,7 @@ namespace NoteKeeperXamarin.Operator
                 _storageService = service;
             }
             _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
-            OpenLastSavedNote();
+            OpenLastSavedNoteViaMetaData();
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
@@ -49,7 +49,7 @@ namespace NoteKeeperXamarin.Operator
             {
                 _noteFilesDirectory = path;
             }
-            OpenLastSavedNote();
+            OpenLastSavedNoteViaMetaData();
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
@@ -107,11 +107,17 @@ namespace NoteKeeperXamarin.Operator
             OpenNote(Path.Combine(_noteFilesDirectory, MetaData.LastSavedNotePath));
         }
 
-        public void DeleteNote()
+        public void DeleteFooNoteFile()
         {
             string path = Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
             _storageService.DeleteFile<Note>(path);
-            Note = null;
+        }
+
+        public void DeleteNoteFile()
+        {
+            string path = GetFullPathOfDirectoryAndFileName();
+            if (String.IsNullOrEmpty(path)) return;
+            _storageService.DeleteFile<Note>(path);
         }
 
         private string GenerateFileName()
