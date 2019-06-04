@@ -21,9 +21,9 @@ namespace NoteKeeperXamarin.Operator
 
         public NoteOperator(IStorageService service, string path)
         {
-            OpenLastSavedNote();
             _storageService = service;
             _noteFilesDirectory = path;
+            OpenLastSavedNote();
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
