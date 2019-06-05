@@ -38,7 +38,6 @@ namespace NoteKeeperXamarin.ViewModels
 
             set
             {
-                if (String.IsNullOrWhiteSpace(value)) return;
                 _noteTitle = value;
                 OnPropertyChanged(nameof(NoteTitleEntry));
                 SaveNote.ChangeCanExecute();
@@ -102,14 +101,15 @@ namespace NoteKeeperXamarin.ViewModels
 
         void SaveNoteExecute()
         {
-            _noteOperator.SaveWithStaticFileName(NoteTitleEntry, NoteTextEditor);
+            _noteOperator.SaveWithDynamicFileName(NoteTitleEntry, NoteTextEditor);
             UpdateNoteView();
             DeleteNote.ChangeCanExecute();
         }
 
         void DeleteNoteExecute()
         {
-            _noteOperator.DeleteNote();
+            _noteOperator.DeleteNoteFile();
+            _noteOperator.Note = null;
             UpdateNoteView();
             SaveNote.ChangeCanExecute();
             DeleteNote.ChangeCanExecute();
