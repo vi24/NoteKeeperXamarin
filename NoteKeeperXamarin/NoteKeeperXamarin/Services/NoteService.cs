@@ -147,7 +147,7 @@ namespace NoteKeeperXamarin.Services
             _storageService.SaveToFile<MetaData>(MetaData, Path.Combine(_metaDataDirectory, METADATA_FILE_NAME + _storageService.FileExtensionName));
         }
 
-        public string[] GetAllExistingNoteFiles()
+        public string[] GetNamesOfAllExistingNoteFiles()
         {
             return Directory.GetFiles(_noteFilesDirectory);
         }

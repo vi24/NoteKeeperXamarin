@@ -13,7 +13,7 @@ namespace NoteKeeperXamarin.ViewModels
 {
     public class NotesListViewModel: INotifyPropertyChanged
     {
-        private string[] FileNames;
+        private string[] _fileNames;
         private readonly NoteService _noteService;
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -22,11 +22,13 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService = new NoteService(service);
             _noteService.NotesChanged += UpdateNotesList;
             AddNote = new Command(async () => await AddNoteExecuteAsync());
-            FileNames = _noteService.GetAllExistingNoteFiles();
+            OpenNote = new Command<int>(async (id) => await OpenNoteExecuteAsync(id));
+            _fileNames = _noteService.GetNamesOfAllExistingNoteFiles();
             CreateNotesList();
         }
 
         public Command AddNote { get; private set; }
+        public Command OpenNote { get; private set; }
         public List<NoteItemModel> NoteItemList { get; private set; }
 
         private void OnPropertyChanged(string propertyName)
@@ -37,23 +39,27 @@ namespace NoteKeeperXamarin.ViewModels
         private void CreateNotesList()
         {
             NoteItemList = new List<NoteItemModel>();
-            for (int i = 0; i < FileNames.Length; i++)
+            for (int i = 0; i < _fileNames.Length; i++)
             {
-                NoteItemList.Add(new NoteItemModel { ID = i, NoteFileName = Path.GetFileName(FileNames[i]) });
+                NoteItemList.Add(new NoteItemModel { ID = i, NoteFileName = Path.GetFileName(_fileNames[i]) });
             }   
         }
 
         private void UpdateNotesList(object sender, EventArgs e)
         {
-            FileNames = _noteService.GetAllExistingNoteFiles();
+            _fileNames = _noteService.GetNamesOfAllExistingNoteFiles();
             CreateNotesList();
             OnPropertyChanged(nameof(NoteItemList));
         }
 
         async Task AddNoteExecuteAsync()
         {
-            await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService));
+            await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService, String.Empty));
         }
 
+        async Task OpenNoteExecuteAsync(int id)
+        {
+            await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService, _fileNames[id]));
+        }
     }
 }

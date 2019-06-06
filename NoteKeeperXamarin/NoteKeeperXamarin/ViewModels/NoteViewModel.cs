@@ -23,6 +23,18 @@ namespace NoteKeeperXamarin.ViewModels
             UpdateNoteView();
         }
 
+        public NoteViewModel(NoteService noteService, string path)
+        {
+            _noteService = noteService;
+            SaveNote = new Command(SaveNoteExecute, () => CanSave);
+            DeleteNote = new Command(DeleteNoteExecute, () => CanDelete);
+            if (!String.IsNullOrWhiteSpace(path))
+            {
+                _noteService.OpenNote(path);
+            }
+            UpdateNoteView();
+        }
+
         #region Properties
         public string NoteTitleEntry
         {
