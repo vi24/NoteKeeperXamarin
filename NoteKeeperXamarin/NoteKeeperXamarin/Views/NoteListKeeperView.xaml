@@ -14,7 +14,11 @@
             <ListView ItemsSource="{Binding NoteItemList}" x:Name="NotesList">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding NoteFileName}" Command="{Binding Path=BindingContext.OpenNote, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding Id}"></TextCell>
+                        <TextCell Text="{Binding NoteFileName}" Command="{Binding Path=BindingContext.OpenNote, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding Id}">
+                            <TextCell.ContextActions>
+                                <MenuItem Text="Delete" Command="{Binding Path=BindingContext.DeleteNote, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding Id}" IsDestructive="True"/>
+                            </TextCell.ContextActions>
+                        </TextCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

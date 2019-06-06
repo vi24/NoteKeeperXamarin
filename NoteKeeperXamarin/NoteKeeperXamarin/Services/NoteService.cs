@@ -128,6 +128,13 @@ namespace NoteKeeperXamarin.Services
             OnNotesChanged(this, EventArgs.Empty);
         }
 
+        public void DeleteNoteFile(string path)
+        {
+            if (String.IsNullOrEmpty(path)) return;
+            _storageService.DeleteFile<Note>(path);
+            OnNotesChanged(this, EventArgs.Empty);
+        }
+
         private string GenerateFileName()
         {
             if (Note == null) return String.Empty;
