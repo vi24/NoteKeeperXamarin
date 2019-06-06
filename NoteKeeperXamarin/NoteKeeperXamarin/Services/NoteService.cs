@@ -16,7 +16,7 @@ namespace NoteKeeperXamarin.Services
         private readonly string _noteFilesDirectory;
         private readonly string _metaDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-        public event EventHandler notesChanged;
+        public event EventHandler NotesChanged;
 
         public NoteService(IStorageService service)
         {
@@ -29,13 +29,12 @@ namespace NoteKeeperXamarin.Services
                 _storageService = service;
             }
             _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
-            OpenLastSavedNoteViaMetaData();
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
         private void OnNotesChanged(object sender, EventArgs e)
         {
-            notesChanged?.Invoke(this, e);
+            NotesChanged?.Invoke(this, e);
         }
 
         public NoteService(IStorageService service, string path)

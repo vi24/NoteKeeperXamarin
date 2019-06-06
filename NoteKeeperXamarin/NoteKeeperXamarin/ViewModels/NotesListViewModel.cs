@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -14,13 +15,12 @@ namespace NoteKeeperXamarin.ViewModels
     {
         private string[] FileNames;
         private readonly NoteService _noteService;
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public NotesListViewModel(IStorageService service)
         {
             _noteService = new NoteService(service);
-            _noteService.notesChanged += UpdateNotesList;
+            _noteService.NotesChanged += UpdateNotesList;
             AddNote = new Command(async () => await AddNoteExecuteAsync());
             FileNames = _noteService.GetAllExistingNoteFiles();
             CreateNotesList();
@@ -39,7 +39,7 @@ namespace NoteKeeperXamarin.ViewModels
             NoteItemList = new List<NoteItemModel>();
             for (int i = 0; i < FileNames.Length; i++)
             {
-                NoteItemList.Add(new NoteItemModel { ID = i, NoteFileName = FileNames[i] });
+                NoteItemList.Add(new NoteItemModel { ID = i, NoteFileName = Path.GetFileName(FileNames[i]) });
             }   
         }
 
