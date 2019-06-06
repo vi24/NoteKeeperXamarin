@@ -1,6 +1,7 @@
 ﻿using NoteKeeperXamarin.Services;
 using System;
 using System.ComponentModel;
+using System.IO;
 using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
@@ -28,9 +29,13 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService = noteService;
             SaveNote = new Command(SaveNoteExecute, () => CanSave);
             DeleteNote = new Command(DeleteNoteExecute, () => CanDelete);
-            if (!String.IsNullOrWhiteSpace(path))
+            if (!String.IsNullOrWhiteSpace(path) && File.Exists(path))
             {
                 _noteService.OpenNote(path);
+            }
+            else
+            {
+                _noteService.Note = null;
             }
             UpdateNoteView();
         }

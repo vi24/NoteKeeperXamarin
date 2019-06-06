@@ -6,7 +6,7 @@ namespace NoteKeeperXamarin.ViewModels
 {
     public class NoteItemModel
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string NoteFileName { get; set; }
     }
 }
