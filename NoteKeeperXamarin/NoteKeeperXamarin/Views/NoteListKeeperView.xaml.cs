@@ -12,12 +12,12 @@ using Xamarin.Forms.Xaml;
 namespace NoteKeeperXamarin.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class NoteKeeperView : ContentPage
+    public partial class NoteListKeeperView : ContentPage
     {
-        public NoteKeeperView(NoteService noteService)
+        public NoteListKeeperView()
         {
             InitializeComponent();
-            this.BindingContext = new NoteViewModel(noteService);
+            this.BindingContext = new NotesListViewModel(new JSONStorageService());
         }
     }
 }

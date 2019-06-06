@@ -10,8 +10,7 @@ namespace NoteKeeperXamarin
         public App()
         {
             InitializeComponent();
-
-            MainPage = new NoteKeeperView();
+            MainPage = new NavigationPage(new NoteListKeeperView());
         }
 
         protected override void OnStart()

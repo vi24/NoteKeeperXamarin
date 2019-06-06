@@ -6,9 +6,9 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace NoteKeeperXamarin.Operator
+namespace NoteKeeperXamarin.Services
 {
-    public class NoteOperator
+    public class NoteService
     {
         private const string STATIC_FILE_NAME = "foo";
         private const string METADATA_FILE_NAME = "metadata";
@@ -16,7 +16,9 @@ namespace NoteKeeperXamarin.Operator
         private readonly string _noteFilesDirectory;
         private readonly string _metaDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
-        public NoteOperator(IStorageService service)
+        public event EventHandler notesChanged;
+
+        public NoteService(IStorageService service)
         {
             if (service == null)
             {
@@ -31,7 +33,12 @@ namespace NoteKeeperXamarin.Operator
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
-        public NoteOperator(IStorageService service, string path)
+        private void OnNotesChanged(object sender, EventArgs e)
+        {
+            notesChanged?.Invoke(this, e);
+        }
+
+        public NoteService(IStorageService service, string path)
         {
             if (service == null)
             {
@@ -84,6 +91,7 @@ namespace NoteKeeperXamarin.Operator
             }
             _storageService.SaveToFile<Note>(Note, GetFullPathOfDirectoryAndFileName());
             WriteLastSavedNoteToMetaDataFile();
+            OnNotesChanged(this, EventArgs.Empty);
         }
 
         public void OpenNote(string fullPathName)
@@ -118,6 +126,7 @@ namespace NoteKeeperXamarin.Operator
             string path = GetFullPathOfDirectoryAndFileName();
             if (String.IsNullOrEmpty(path)) return;
             _storageService.DeleteFile<Note>(path);
+            OnNotesChanged(this, EventArgs.Empty);
         }
 
         private string GenerateFileName()
@@ -137,6 +146,11 @@ namespace NoteKeeperXamarin.Operator
             if (Note == null) return;
             MetaData = new MetaData(GenerateFileName());
             _storageService.SaveToFile<MetaData>(MetaData, Path.Combine(_metaDataDirectory, METADATA_FILE_NAME + _storageService.FileExtensionName));
+        }
+
+        public string[] GetAllExistingNoteFiles()
+        {
+            return Directory.GetFiles(_noteFilesDirectory);
         }
     }
 }

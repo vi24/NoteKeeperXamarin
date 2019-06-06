@@ -1,18 +1,13 @@
-﻿using NoteKeeperXamarin.Models;
-using NoteKeeperXamarin.Operator;
-using NoteKeeperXamarin.Services;
+﻿using NoteKeeperXamarin.Services;
 using System;
 using System.ComponentModel;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
 {
     public class NoteViewModel: INotifyPropertyChanged
     {
-        private readonly NoteOperator _noteOperator;
+        private readonly NoteService _noteService;
         private string _noteTitle;
         private string _noteText;
         private string _createdString;
@@ -20,9 +15,9 @@ namespace NoteKeeperXamarin.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public NoteViewModel (IStorageService service)
+        public NoteViewModel (NoteService noteService)
         {
-            _noteOperator = new NoteOperator(service);
+            _noteService = noteService;
             SaveNote = new Command(SaveNoteExecute, () => CanSave);
             DeleteNote = new Command(DeleteNoteExecute, () => CanDelete);
             UpdateNoteView();
@@ -90,7 +85,7 @@ namespace NoteKeeperXamarin.ViewModels
         public Command DeleteNote { get; private set; }
 
         public bool CanSave => !String.IsNullOrWhiteSpace(NoteTitleEntry);
-        public bool CanDelete => _noteOperator.Note != null;
+        public bool CanDelete => _noteService.Note != null;
 
         #endregion
 
@@ -101,28 +96,29 @@ namespace NoteKeeperXamarin.ViewModels
 
         void SaveNoteExecute()
         {
-            _noteOperator.SaveWithDynamicFileName(NoteTitleEntry, NoteTextEditor);
+            _noteService.SaveWithDynamicFileName(NoteTitleEntry, NoteTextEditor);
             UpdateNoteView();
             DeleteNote.ChangeCanExecute();
         }
 
         void DeleteNoteExecute()
         {
-            _noteOperator.DeleteNoteFile();
-            _noteOperator.Note = null;
+            _noteService.DeleteNoteFile();
+            _noteService.Note = null;
             UpdateNoteView();
             SaveNote.ChangeCanExecute();
             DeleteNote.ChangeCanExecute();
+            Application.Current.MainPage.Navigation.PopAsync();
         }
 
         private void UpdateNoteView()
         {
-            if (_noteOperator.Note != null)
+            if (_noteService.Note != null)
             {
-                NoteTitleEntry = _noteOperator.Note.Title;
-                NoteTextEditor = _noteOperator.Note.Text;
-                CreatedString = _noteOperator.Note.Created.ToString();
-                LastEditedString = _noteOperator.Note.LastEdited.ToString();
+                NoteTitleEntry = _noteService.Note.Title;
+                NoteTextEditor = _noteService.Note.Text;
+                CreatedString = _noteService.Note.Created.ToString();
+                LastEditedString = _noteService.Note.LastEdited.ToString();
             }
             else
             {
