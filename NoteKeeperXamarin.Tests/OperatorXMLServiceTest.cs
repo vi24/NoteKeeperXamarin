@@ -1,7 +1,5 @@
 ﻿using NoteKeeperXamarin.Models;
-using NoteKeeperXamarin.Operator;
 using NoteKeeperXamarin.Services;
-using NoteKeeperXamarin.ViewModels;
 using System;
 using System.IO;
 using Xunit;
