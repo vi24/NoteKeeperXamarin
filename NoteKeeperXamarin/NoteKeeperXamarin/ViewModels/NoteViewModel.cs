@@ -1,4 +1,5 @@
-﻿using NoteKeeperXamarin.Services;
+﻿using NoteKeeperXamarin.Models;
+using NoteKeeperXamarin.Services;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -9,6 +10,8 @@ namespace NoteKeeperXamarin.ViewModels
     public class NoteViewModel: INotifyPropertyChanged
     {
         private readonly NoteService _noteService;
+        private Note _note;
+        private string _notePath;
         private string _noteTitle;
         private string _noteText;
         private string _createdString;
@@ -31,11 +34,12 @@ namespace NoteKeeperXamarin.ViewModels
             DeleteNote = new Command(DeleteNoteExecute, () => CanDelete);
             if (!String.IsNullOrWhiteSpace(path) && File.Exists(path))
             {
-                _noteService.OpenNote(path);
+                _note = _noteService.OpenNote(path);
+                _notePath = path;
             }
             else
             {
-                _noteService.Note = null;
+                _note = null;
             }
             UpdateNoteView();
         }
@@ -102,7 +106,7 @@ namespace NoteKeeperXamarin.ViewModels
         public Command DeleteNote { get; private set; }
 
         public bool CanSave => !String.IsNullOrWhiteSpace(NoteTitleEntry);
-        public bool CanDelete => _noteService.Note != null;
+        public bool CanDelete => _note != null;
 
         #endregion
 
@@ -113,15 +117,24 @@ namespace NoteKeeperXamarin.ViewModels
 
         void SaveNoteExecute()
         {
-            _noteService.SaveWithDynamicFileName(NoteTitleEntry, NoteTextEditor);
+            if(_note != null)
+            {
+                _note.Title = NoteTitleEntry;
+                _note.Text = NoteTextEditor;
+                _note.LastEdited = DateTime.Now;
+            }
+            else
+            {
+                _note = new Note(NoteTitleEntry, NoteTextEditor, DateTime.Now, DateTime.Now);
+            }
+            _notePath = _noteService.SaveWithDynamicFileName(_note);
             UpdateNoteView();
             DeleteNote.ChangeCanExecute();
         }
 
         void DeleteNoteExecute()
         {
-            _noteService.DeleteNoteFile();
-            _noteService.Note = null;
+            _noteService.DeleteNoteFile(_notePath);
             UpdateNoteView();
             SaveNote.ChangeCanExecute();
             DeleteNote.ChangeCanExecute();
@@ -130,12 +143,12 @@ namespace NoteKeeperXamarin.ViewModels
 
         private void UpdateNoteView()
         {
-            if (_noteService.Note != null)
+            if (_note != null)
             {
-                NoteTitleEntry = _noteService.Note.Title;
-                NoteTextEditor = _noteService.Note.Text;
-                CreatedString = _noteService.Note.Created.ToString();
-                LastEditedString = _noteService.Note.LastEdited.ToString();
+                NoteTitleEntry = _note.Title;
+                NoteTextEditor = _note.Text;
+                CreatedString = _note.Created.ToString();
+                LastEditedString = _note.LastEdited.ToString();
             }
             else
             {

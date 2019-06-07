@@ -11,7 +11,7 @@
             <Label Text="Title"/>
             <Entry x:Name="TitelEntry" Placeholder="Enter your title" Text="{Binding NoteTitleEntry, Mode=TwoWay}"></Entry>
             <Label Text="Text"/>
-            <Editor x:Name="TextEditor" VerticalOptions="FillAndExpand" Placeholder="Enter your text" Text="{Binding NoteTextEditor}"></Editor>
+            <Editor x:Name="TextEditor" VerticalOptions="FillAndExpand" Placeholder="Enter your text" Text="{Binding NoteTextEditor, Mode=TwoWay}"></Editor>
             <RelativeLayout VerticalOptions="EndAndExpand" HorizontalOptions="CenterAndExpand">
                 <StackLayout Orientation="Horizontal">
                     <Grid>

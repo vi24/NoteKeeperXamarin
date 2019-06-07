@@ -15,6 +15,8 @@ namespace NoteKeeperXamarin.Models
         [DataMember]
         public DateTime LastEdited { get; set; }
 
+        public Note(){}
+
         public Note (string title, string text, DateTime created, DateTime lastEdited)
         {
             if (string.IsNullOrWhiteSpace(title))
@@ -27,5 +29,7 @@ namespace NoteKeeperXamarin.Models
             Created = created;
             LastEdited = lastEdited;
         }
+
+        
     }
 }
