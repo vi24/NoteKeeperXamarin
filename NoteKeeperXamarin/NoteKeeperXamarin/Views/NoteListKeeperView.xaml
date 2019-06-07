@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              x:Class="NoteKeeperXamarin.Views.NoteListKeeperView">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Command="{Binding AddNote}"/>
+        <ToolbarItem Icon="baseline_add_black_18dp.png" Command="{Binding AddNote}"/>
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
