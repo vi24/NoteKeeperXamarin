@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Xamarin.Essentials;
 
 namespace NoteKeeperXamarin.Services
 {
@@ -14,7 +15,7 @@ namespace NoteKeeperXamarin.Services
         private const string METADATA_FILE_NAME = "metadata";
         private readonly IStorageService _storageService;
         private readonly string _noteFilesDirectory;
-        private readonly string _metaDataDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private readonly string _metaDataDirectory = FileSystem.AppDataDirectory;
 
         public event EventHandler NotesChanged;
 
@@ -28,7 +29,7 @@ namespace NoteKeeperXamarin.Services
             {
                 _storageService = service;
             }
-            _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
+            _noteFilesDirectory = Path.Combine(FileSystem.AppDataDirectory, "SerializedNotes");
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
@@ -128,6 +129,18 @@ namespace NoteKeeperXamarin.Services
             OnNotesChanged(this, EventArgs.Empty);
         }
 
+        public void DeleteNoteFile(string path)
+        {
+            if (String.IsNullOrEmpty(path)) return;
+            _storageService.DeleteFile<Note>(path);
+            OnNotesChanged(this, EventArgs.Empty);
+        }
+
+        public string[] GetNamesOfAllExistingNoteFiles()
+        {
+            return Directory.GetFiles(_noteFilesDirectory);
+        }
+
         private string GenerateFileName()
         {
             if (Note == null) return String.Empty;
@@ -145,11 +158,6 @@ namespace NoteKeeperXamarin.Services
             if (Note == null) return;
             MetaData = new MetaData(GenerateFileName());
             _storageService.SaveToFile<MetaData>(MetaData, Path.Combine(_metaDataDirectory, METADATA_FILE_NAME + _storageService.FileExtensionName));
-        }
-
-        public string[] GetNamesOfAllExistingNoteFiles()
-        {
-            return Directory.GetFiles(_noteFilesDirectory);
         }
     }
 }

@@ -3,15 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="clr-namespace:NoteKeeperXamarin.Behaviors"
              mc:Ignorable="d"
              x:Class="NoteKeeperXamarin.Views.NoteListKeeperView">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="baseline_add_black_18dp.png" Command="{Binding AddNote}"/>
+    </ContentPage.ToolbarItems>
+    
     <ContentPage.Content>
         <StackLayout>
             <ListView ItemsSource="{Binding NoteItemList}" x:Name="NotesList">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding NoteFileName}" Command="{Binding Path=BindingContext.OpenNote, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding Id}"></TextCell>
+                        <TextCell Text="{Binding NoteFileName}" Command="{Binding Path=BindingContext.OpenNote, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding Id}">
+                            <TextCell.ContextActions>
+                                <MenuItem Text="Delete" Command="{Binding Path=BindingContext.DeleteNote, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding Id}" IsDestructive="True"/>
+                            </TextCell.ContextActions>
+                        </TextCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

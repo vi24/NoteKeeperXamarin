@@ -23,17 +23,25 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService.NotesChanged += UpdateNotesList;
             AddNote = new Command(async () => await AddNoteExecuteAsync());
             OpenNote = new Command<int>(async (id) => await OpenNoteExecuteAsync(id));
+            DeleteNote = new Command<int>((id) => DeleteNoteExecute(id));
             _fileNames = _noteService.GetNamesOfAllExistingNoteFiles();
             CreateNotesList();
         }
 
         public Command AddNote { get; private set; }
         public Command OpenNote { get; private set; }
+        public Command DeleteNote { get; private set; }
         public List<NoteItemModel> NoteItemList { get; private set; }
 
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void DeleteNoteExecute(int id)
+        {
+            _noteService.DeleteNoteFile(_fileNames[id]);
+            OnPropertyChanged(nameof(NoteItemList));
         }
 
         private async Task AddNoteExecuteAsync()
