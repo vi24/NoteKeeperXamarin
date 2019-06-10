@@ -11,11 +11,10 @@ using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
 {
-    public class NotesListViewModel: INotifyPropertyChanged
+    public class NotesListViewModel: ViewModelBase
     {
         private string[] _fileNames;
         private readonly NoteService _noteService;
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public NotesListViewModel(IStorageService service)
         {
@@ -32,11 +31,6 @@ namespace NoteKeeperXamarin.ViewModels
         public Command OpenNote { get; private set; }
         public Command DeleteNote { get; private set; }
         public List<NoteItemModel> NoteItemList { get; private set; }
-
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         private void DeleteNoteExecute(int id)
         {

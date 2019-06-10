@@ -31,22 +31,22 @@ namespace NoteKeeperXamarin.Tests
             Directory.Delete(PATH);
         }
 
-        [Fact]
-        public void SaveWithStaticFileName_GivenJSONServiceTitleAndText_WhenOverridingOldFile_ThenCreatedTimeShouldStayTheSame()
-        {
-            //Arrange
-            SetUp();
-            NoteViewModel noteVM = new NoteViewModel(new NoteService(new JSONStorageService(), PATH));
-            Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
-            noteVM.SaveNote.Execute();
-            string expectedCreatedTimeInString = expectedNote.Created.ToString();
-            //Act
-            noteVM.SaveNote.Execute(expectedNote);
-            string actualCreatedTimeInString = noteVM.CreatedString;
-            //Assert
-            Assert.Equal(expectedCreatedTimeInString, actualCreatedTimeInString);
-            TearDown();
-        }
+        //[Fact]
+        //public void SaveWithStaticFileName_GivenJSONServiceTitleAndText_WhenOverridingOldFile_ThenCreatedTimeShouldStayTheSame()
+        //{
+        //    //Arrange
+        //    SetUp();
+        //    NoteViewModel noteVM = new NoteViewModel(new NoteService(new JSONStorageService(), PATH));
+        //    Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
+        //    noteVM.SaveNote.Execute();
+        //    string expectedCreatedTimeInString = expectedNote.Created.ToString();
+        //    //Act
+        //    noteVM.SaveNote.Execute(expectedNote);
+        //    string actualCreatedTimeInString = noteVM.CreatedString;
+        //    //Assert
+        //    Assert.Equal(expectedCreatedTimeInString, actualCreatedTimeInString);
+        //    TearDown();
+        //}
 
         [Fact]
         public void SaveWithStaticFileName_GivenJSONServiceTitleAndText_WhenOverridingOldFile_ThenCurrentLastEditedTimeShouldBeGreaterThanPreviousLastEditedTime()

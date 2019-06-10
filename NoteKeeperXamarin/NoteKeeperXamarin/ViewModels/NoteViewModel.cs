@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
 {
-    public class NoteViewModel: INotifyPropertyChanged
+    public class NoteViewModel: ViewModelBase
     {
         private readonly NoteService _noteService;
         private Note _note;
@@ -16,8 +16,6 @@ namespace NoteKeeperXamarin.ViewModels
         private string _noteText;
         private string _createdString;
         private string _lastEditedString;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public NoteViewModel (NoteService noteService)
         {
@@ -109,11 +107,6 @@ namespace NoteKeeperXamarin.ViewModels
         public bool CanDelete => _note != null;
 
         #endregion
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         void SaveNoteExecute()
         {
