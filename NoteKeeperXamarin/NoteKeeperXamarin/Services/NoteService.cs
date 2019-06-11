@@ -67,6 +67,12 @@ namespace NoteKeeperXamarin.Services
             return path;
         }
 
+        public void SaveWithDynamicFileName(Note note, string path)
+        {
+            _storageService.SaveToFile<Note>(note, path);
+            OnNotesChanged(this, EventArgs.Empty);
+        }
+
         public Note OpenNote(string fullPathName)
         {
             if (!File.Exists(fullPathName))

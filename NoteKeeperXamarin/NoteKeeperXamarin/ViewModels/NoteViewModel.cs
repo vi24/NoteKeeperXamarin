@@ -115,12 +115,13 @@ namespace NoteKeeperXamarin.ViewModels
                 _note.Title = NoteTitleEntry;
                 _note.Text = NoteTextEditor;
                 _note.LastEdited = DateTime.Now;
+                _noteService.SaveWithDynamicFileName(_note, _notePath);
             }
             else
             {
                 _note = new Note(NoteTitleEntry, NoteTextEditor, DateTime.Now, DateTime.Now);
+                _notePath = _noteService.SaveWithDynamicFileName(_note);
             }
-            _notePath = _noteService.SaveWithDynamicFileName(_note);
             UpdateNoteView();
             DeleteNote.ChangeCanExecute();
         }
