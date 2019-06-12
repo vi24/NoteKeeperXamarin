@@ -1,4 +1,5 @@
-﻿using NoteKeeperXamarin.Views;
+﻿using NoteKeeperXamarin.Services;
+using NoteKeeperXamarin.Views;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;

@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Xml;
 
 namespace NoteKeeperXamarin.Services
 {

@@ -1,13 +1,14 @@
 ﻿using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
+using ReactiveUI;
 using System;
-using System.ComponentModel;
 using System.IO;
+using System.Reactive;
 using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
 {
-    public class NoteViewModel: ViewModelBase
+    public class NoteViewModel : ViewModelBase
     {
         private readonly NoteService _noteService;
         private Note _note;
@@ -16,28 +17,37 @@ namespace NoteKeeperXamarin.ViewModels
         private string _noteText;
         private string _createdString;
         private string _lastEditedString;
+        private bool _canDelete;
 
-        public NoteViewModel (NoteService noteService)
+        public NoteViewModel(NoteService noteService)
         {
             _noteService = noteService;
-            SaveNote = new Command(SaveNoteExecute, () => CanSave);
-            DeleteNote = new Command(DeleteNoteExecute, () => CanDelete);
+            var canSave = CanExecuteSave;
+            var canDelete = CanExecuteDelete;
+            SaveNote = ReactiveCommand.Create(SaveNoteExecute, canSave);
+            DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, canDelete);
+            SaveNote.Subscribe();
+            DeleteNote.Subscribe();
             UpdateNoteView();
         }
 
         public NoteViewModel(NoteService noteService, string path)
         {
             _noteService = noteService;
-            SaveNote = new Command(SaveNoteExecute, () => CanSave);
-            DeleteNote = new Command(DeleteNoteExecute, () => CanDelete);
+            SaveNote = ReactiveCommand.Create(SaveNoteExecute, CanExecuteSave);
+            DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, CanExecuteDelete);
+            SaveNote.Subscribe();
+            DeleteNote.Subscribe();
             if (!String.IsNullOrWhiteSpace(path) && File.Exists(path))
             {
                 _note = _noteService.OpenNote(path);
+                CanDelete = true;
                 _notePath = path;
             }
             else
             {
                 _note = null;
+                CanDelete = false;
             }
             UpdateNoteView();
         }
@@ -46,15 +56,13 @@ namespace NoteKeeperXamarin.ViewModels
         public string NoteTitleEntry
         {
             get
-            { 
+            {
                 return _noteTitle;
             }
 
             set
             {
-                _noteTitle = value;
-                OnPropertyChanged(nameof(NoteTitleEntry));
-                SaveNote.ChangeCanExecute();
+                this.RaiseAndSetIfChanged(ref _noteTitle, value);
             }
         }
 
@@ -67,8 +75,7 @@ namespace NoteKeeperXamarin.ViewModels
 
             set
             {
-                _noteText = value;
-                OnPropertyChanged(nameof(NoteTextEditor));
+                this.RaiseAndSetIfChanged(ref _noteText, value);
             }
         }
 
@@ -81,8 +88,7 @@ namespace NoteKeeperXamarin.ViewModels
 
             private set
             {
-                _createdString = value;
-                OnPropertyChanged(nameof(CreatedString));
+                this.RaiseAndSetIfChanged(ref _createdString, value);
             }
         }
 
@@ -95,22 +101,34 @@ namespace NoteKeeperXamarin.ViewModels
 
             private set
             {
-                _lastEditedString = value;
-                OnPropertyChanged(nameof(LastEditedString));
+                this.RaiseAndSetIfChanged(ref _lastEditedString, value);
             }
         }
 
-        public Command SaveNote { get; private set; }
-        public Command DeleteNote { get; private set; }
+        private bool CanDelete
+        {
+            get
+            {
+                return _canDelete;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _canDelete, value);
+            }
+        }
 
-        public bool CanSave => !String.IsNullOrWhiteSpace(NoteTitleEntry);
-        public bool CanDelete => _note != null;
+        public ReactiveCommand<Unit, Unit> SaveNote { get; }
+        public ReactiveCommand<Unit, Unit> DeleteNote { get; }
+
+        public IObservable<bool> CanExecuteSave => this.WhenAnyValue(x => x.NoteTitleEntry, (NoteTitleEntry) => !string.IsNullOrEmpty(NoteTitleEntry));
+        public IObservable<bool> CanExecuteDelete => this.WhenAnyValue(x => x.CanDelete);
+
 
         #endregion
 
-        void SaveNoteExecute()
+        public void SaveNoteExecute()
         {
-            if(_note != null)
+            if (_note != null)
             {
                 _note.Title = NoteTitleEntry;
                 _note.Text = NoteTextEditor;
@@ -122,16 +140,15 @@ namespace NoteKeeperXamarin.ViewModels
                 _note = new Note(NoteTitleEntry, NoteTextEditor, DateTime.Now, DateTime.Now);
                 _notePath = _noteService.SaveWithDynamicFileName(_note);
             }
+            CanDelete = true;
             UpdateNoteView();
-            DeleteNote.ChangeCanExecute();
         }
 
-        void DeleteNoteExecute()
+        public void DeleteNoteExecute()
         {
             _noteService.DeleteNoteFile(_notePath);
             UpdateNoteView();
-            SaveNote.ChangeCanExecute();
-            DeleteNote.ChangeCanExecute();
+            CanDelete = false;
             Application.Current.MainPage.Navigation.PopAsync();
         }
 

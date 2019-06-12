@@ -1,11 +1,10 @@
 ﻿using NoteKeeperXamarin.Services;
 using NoteKeeperXamarin.Views;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
-using System.Text;
+using System.Reactive;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -20,22 +19,25 @@ namespace NoteKeeperXamarin.ViewModels
         {
             _noteService = new NoteService(service);
             _noteService.NotesChanged += UpdateNotesList;
-            AddNote = new Command(async () => await AddNoteExecuteAsync());
-            OpenNote = new Command<int>(async (id) => await OpenNoteExecuteAsync(id));
-            DeleteNote = new Command<int>((id) => DeleteNoteExecute(id));
+            AddNoteCommand = ReactiveCommand.CreateFromTask<Unit>( (Unit) => AddNoteExecuteAsync());
+            OpenNoteCommand = ReactiveCommand.CreateFromTask<int>((id) => OpenNoteExecuteAsync(id));
+            DeleteNoteCommand = ReactiveCommand.Create<int>((id) => DeleteNoteExecute(id));
+            AddNoteCommand.Subscribe();
+            OpenNoteCommand.Subscribe();
+            DeleteNoteCommand.Subscribe();
             _fileNames = _noteService.GetNamesOfAllExistingNoteFiles();
             CreateNotesList();
         }
 
-        public Command AddNote { get; private set; }
-        public Command OpenNote { get; private set; }
-        public Command DeleteNote { get; private set; }
+        public ReactiveCommand<Unit,Unit> AddNoteCommand { get; }
+        public ReactiveCommand<int ,Unit> OpenNoteCommand { get; }
+        public ReactiveCommand<int ,Unit> DeleteNoteCommand { get; }
         public List<NoteItemModel> NoteItemList { get; private set; }
 
         private void DeleteNoteExecute(int id)
         {
             _noteService.DeleteNoteFile(_fileNames[id]);
-            OnPropertyChanged(nameof(NoteItemList));
+            this.RaisePropertyChanged(nameof(NoteItemList));
         }
 
         private async Task AddNoteExecuteAsync()
@@ -61,7 +63,7 @@ namespace NoteKeeperXamarin.ViewModels
         {
             _fileNames = _noteService.GetNamesOfAllExistingNoteFiles();
             CreateNotesList();
-            OnPropertyChanged(nameof(NoteItemList));
+            this.RaisePropertyChanged(nameof(NoteItemList));
         }
     }
 }
