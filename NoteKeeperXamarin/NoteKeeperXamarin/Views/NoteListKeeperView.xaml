@@ -14,15 +14,14 @@
             <ListView ItemsSource="{Binding NoteItemList}" x:Name="NotesList">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding NoteFileName}" Command="{Binding Path=BindingContext.OpenNoteCommand, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding Id}">
+                        <TextCell Text="{Binding .}" Command="{Binding Path=BindingContext.OpenNoteCommand, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding .}">
                             <TextCell.ContextActions>
-                                <MenuItem Text="Delete" Command="{Binding Path=BindingContext.DeleteNoteCommand, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding Id}" IsDestructive="True"/>
+                                <MenuItem Text="Delete" Command="{Binding Path=BindingContext.DeleteNoteCommand, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding .}" IsDestructive="True"/>
                             </TextCell.ContextActions>
                         </TextCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Button Text="Add Note" HorizontalOptions="FillAndExpand" Command="{Binding AddNoteCommand}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

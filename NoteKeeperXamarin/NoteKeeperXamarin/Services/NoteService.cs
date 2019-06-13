@@ -103,7 +103,7 @@ namespace NoteKeeperXamarin.Services
             OnNotesChanged(this, EventArgs.Empty);
         }
 
-        public string[] GetNamesOfAllExistingNoteFiles()
+        public string[] GetPathsOfAllExistingNoteFiles()
         {
             return Directory.GetFiles(_noteFilesDirectory);
         }
