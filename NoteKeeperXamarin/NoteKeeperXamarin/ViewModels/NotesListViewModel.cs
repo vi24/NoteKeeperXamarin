@@ -22,7 +22,7 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService.NotesChanged += UpdateNotesList;
             AddNoteCommand = ReactiveCommand.CreateFromTask<Unit>( (Unit) => AddNoteExecuteAsync());
             OpenNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => OpenNoteExecuteAsync(filename));
-            DeleteNoteCommand = ReactiveCommand.Create<string>((filename) => DeleteNoteExecute(filename));
+            DeleteNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => DeleteNoteExecute(filename));
             AddNoteCommand.Subscribe();
             OpenNoteCommand.Subscribe();
             DeleteNoteCommand.Subscribe();
@@ -35,13 +35,20 @@ namespace NoteKeeperXamarin.ViewModels
         public ReactiveCommand<string ,Unit> DeleteNoteCommand { get; }
         public List<string> NoteItemList { get; private set; }
 
-        private void DeleteNoteExecute(string filename)
+        private async Task DeleteNoteExecute(string filename)
         {
             var file = from f in _filePaths
                        where Path.GetFileName(f) == filename
                        select f;
-            _noteService.DeleteNoteFile(file.FirstOrDefault());
-            this.RaisePropertyChanged(nameof(NoteItemList));
+            if (file.Count() == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Note not found", "The note that you have selected doesn't exist as a file", "Ok");
+            }
+            else
+            {
+                _noteService.DeleteNoteFile(file.FirstOrDefault());
+                this.RaisePropertyChanged(nameof(NoteItemList));
+            }
         }
 
         private async Task AddNoteExecuteAsync()
@@ -54,7 +61,14 @@ namespace NoteKeeperXamarin.ViewModels
             var file = from f in _filePaths
                        where Path.GetFileName(f) == filename
                        select f;
-            await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService, file.FirstOrDefault()));
+            if(file.Count() == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Note not found", "The note that you have selected doesn't exist as a file", "Ok");
+            }
+            else
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService, file.FirstOrDefault()));
+            }
         }
 
         private void CreateNotesList()

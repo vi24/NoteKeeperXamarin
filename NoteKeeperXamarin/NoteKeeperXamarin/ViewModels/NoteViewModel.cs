@@ -24,8 +24,6 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService = noteService;
             SaveNote = ReactiveCommand.Create(SaveNoteExecute, CanExecuteSave);
             DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, CanExecuteDelete);
-            SaveNote.Subscribe();
-            DeleteNote.Subscribe();
             UpdateNoteView();
         }
 
@@ -34,8 +32,6 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService = noteService;
             SaveNote = ReactiveCommand.Create(SaveNoteExecute, CanExecuteSave);
             DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, CanExecuteDelete);
-            SaveNote.Subscribe();
-            DeleteNote.Subscribe();
             if (!String.IsNullOrWhiteSpace(path) && File.Exists(path))
             {
                 _note = _noteService.OpenNote(path);
