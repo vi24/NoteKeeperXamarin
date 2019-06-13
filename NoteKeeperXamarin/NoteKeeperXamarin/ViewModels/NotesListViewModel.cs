@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
 {
-    public class NotesListViewModel: ViewModelBase
+    public class NotesListViewModel: ReactiveObject
     {
         private string[] _fileNames;
         private readonly NoteService _noteService;

@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
 {
-    public class NoteViewModel : ViewModelBase
+    public class NoteViewModel : ReactiveObject
     {
         private readonly NoteService _noteService;
         private Note _note;
@@ -22,10 +22,8 @@ namespace NoteKeeperXamarin.ViewModels
         public NoteViewModel(NoteService noteService)
         {
             _noteService = noteService;
-            var canSave = CanExecuteSave;
-            var canDelete = CanExecuteDelete;
-            SaveNote = ReactiveCommand.Create(SaveNoteExecute, canSave);
-            DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, canDelete);
+            SaveNote = ReactiveCommand.Create(SaveNoteExecute, CanExecuteSave);
+            DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, CanExecuteDelete);
             SaveNote.Subscribe();
             DeleteNote.Subscribe();
             UpdateNoteView();
@@ -119,10 +117,8 @@ namespace NoteKeeperXamarin.ViewModels
 
         public ReactiveCommand<Unit, Unit> SaveNote { get; }
         public ReactiveCommand<Unit, Unit> DeleteNote { get; }
-
         public IObservable<bool> CanExecuteSave => this.WhenAnyValue(x => x.NoteTitleEntry, (NoteTitleEntry) => !string.IsNullOrEmpty(NoteTitleEntry));
         public IObservable<bool> CanExecuteDelete => this.WhenAnyValue(x => x.CanDelete);
-
 
         #endregion
 
