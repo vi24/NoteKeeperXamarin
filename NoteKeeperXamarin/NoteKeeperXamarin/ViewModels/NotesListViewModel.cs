@@ -23,9 +23,6 @@ namespace NoteKeeperXamarin.ViewModels
             AddNoteCommand = ReactiveCommand.CreateFromTask<Unit>( (Unit) => AddNoteExecuteAsync());
             OpenNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => OpenNoteExecuteAsync(filename));
             DeleteNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => DeleteNoteExecute(filename));
-            AddNoteCommand.Subscribe();
-            OpenNoteCommand.Subscribe();
-            DeleteNoteCommand.Subscribe();
             _filePaths = _noteService.GetPathsOfAllExistingNoteFiles();
             CreateNotesList();
         }
@@ -58,16 +55,15 @@ namespace NoteKeeperXamarin.ViewModels
 
         private async Task OpenNoteExecuteAsync(string filename)
         {
-            var file = from f in _filePaths
-                       where Path.GetFileName(f) == filename
-                       select f;
-            if(file.Count() == 0)
+            var file = _filePaths.Where(filepath => Path.GetFileName(filepath) == filename).SingleOrDefault();
+
+            if(file == null)
             {
                 await Application.Current.MainPage.DisplayAlert("Note not found", "The note that you have selected doesn't exist as a file", "Ok");
             }
             else
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService, file.FirstOrDefault()));
+                await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService, file));
             }
         }
 
@@ -77,7 +73,7 @@ namespace NoteKeeperXamarin.ViewModels
             for (int i = 0; i < _filePaths.Length; i++)
             {
                 NoteItemList.Add(Path.GetFileName(_filePaths[i]));
-            }   
+            }
         }
 
         private void UpdateNotesList(object sender, EventArgs e)

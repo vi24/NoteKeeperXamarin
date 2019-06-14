@@ -6,15 +6,18 @@
              mc:Ignorable="d"
              x:Class="NoteKeeperXamarin.Views.NoteListKeeperView">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Icon="baseline_add_black_18dp.png" Command="{Binding AddNoteCommand}"/>
+        <ToolbarItem Text="Add" Command="{Binding AddNoteCommand}">
+            <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource" iOS="baseline_add_black_18dp.png" Android="baseline_add_black_18dp.png"/>
+            </ToolbarItem.Icon>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
-    
     <ContentPage.Content>
         <StackLayout>
             <ListView ItemsSource="{Binding NoteItemList}" x:Name="NotesList">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding .}" Command="{Binding Path=BindingContext.OpenNoteCommand, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding .}">
+                        <TextCell Text="Hallo" Command="{Binding Path=BindingContext.OpenNoteCommand, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding .}">
                             <TextCell.ContextActions>
                                 <MenuItem Text="Delete" Command="{Binding Path=BindingContext.DeleteNoteCommand, Source={x:Reference Name=NotesList}}" CommandParameter="{Binding .}" IsDestructive="True"/>
                             </TextCell.ContextActions>
