@@ -1,4 +1,5 @@
 ﻿using NoteKeeperXamarin.Models;
+using Splat;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -14,16 +15,9 @@ namespace NoteKeeperXamarin.Services
 
         public event EventHandler NotesChanged;
 
-        public NoteService(IStorageService service)
+        public NoteService()
         {
-            if (service == null)
-            {
-                _storageService = new JSONStorageService();
-            }
-            else
-            {
-                _storageService = service;
-            }
+            _storageService = Locator.Current.GetService<IStorageService>();
             _noteFilesDirectory = Path.Combine(FileSystem.AppDataDirectory, "SerializedNotes");
             Directory.CreateDirectory(_noteFilesDirectory);
         }

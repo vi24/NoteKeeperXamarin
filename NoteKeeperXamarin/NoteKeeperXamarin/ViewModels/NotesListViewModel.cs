@@ -16,9 +16,9 @@ namespace NoteKeeperXamarin.ViewModels
         private string[] _filePaths;
         private readonly NoteService _noteService;
 
-        public NotesListViewModel(IStorageService service)
+        public NotesListViewModel()
         {
-            _noteService = new NoteService(service);
+            _noteService = new NoteService();
             _noteService.NotesChanged += UpdateNotesList;
             AddNoteCommand = ReactiveCommand.CreateFromTask<Unit>( (Unit) => AddNoteExecuteAsync());
             OpenNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => OpenNoteExecuteAsync(filename));
@@ -34,16 +34,15 @@ namespace NoteKeeperXamarin.ViewModels
 
         private async Task DeleteNoteExecute(string filename)
         {
-            var file = from f in _filePaths
-                       where Path.GetFileName(f) == filename
-                       select f;
+            var file = _filePaths.Where(filepath => Path.GetFileName(filepath) == filename).SingleOrDefault();
+
             if (file.Count() == 0)
             {
                 await Application.Current.MainPage.DisplayAlert("Note not found", "The note that you have selected doesn't exist as a file", "Ok");
             }
             else
             {
-                _noteService.DeleteNoteFile(file.FirstOrDefault());
+                _noteService.DeleteNoteFile(file);
                 this.RaisePropertyChanged(nameof(NoteItemList));
             }
         }
