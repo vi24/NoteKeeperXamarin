@@ -32,16 +32,15 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService = noteService;
             SaveNote = ReactiveCommand.Create(SaveNoteExecute, CanExecuteSave);
             DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, CanExecuteDelete);
-            if (!String.IsNullOrWhiteSpace(path) && File.Exists(path))
+            try
             {
                 _note = _noteService.OpenNote(path);
                 CanDelete = true;
                 _notePath = path;
             }
-            else
+            catch (Exception)
             {
-                _note = null;
-                CanDelete = false;
+                //Silently ignoring
             }
             UpdateNoteView();
         }

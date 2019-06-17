@@ -1,5 +1,6 @@
 ﻿using NoteKeeperXamarin.Services;
 using NoteKeeperXamarin.Views;
+using Splat;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -11,6 +12,7 @@ namespace NoteKeeperXamarin
         public App()
         {
             InitializeComponent();
+            Locator.CurrentMutable.Register(() => new CSVStorageService(), typeof(IStorageService));
             MainPage = new NavigationPage(new NoteListKeeperView());
         }
 

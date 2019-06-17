@@ -14,16 +14,16 @@ namespace NoteKeeperXamarin.Services
 
         public event EventHandler NotesChanged;
 
-        public NoteService()
+        public NoteService(IStorageService storageService = null)
         {
-            _storageService = Locator.Current.GetService<IStorageService>();
+            _storageService = storageService ?? Locator.Current.GetService<IStorageService>();
             _noteFilesDirectory = Path.Combine(FileSystem.AppDataDirectory, "SerializedNotes");
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
-        public NoteService(string path)
+        public NoteService(string path, IStorageService storageService = null)
         {
-            _storageService = Locator.Current.GetService<IStorageService>();
+            _storageService = storageService ?? Locator.Current.GetService<IStorageService>();
             if (String.IsNullOrWhiteSpace(path))
             {
                 _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
@@ -53,12 +53,17 @@ namespace NoteKeeperXamarin.Services
             _storageService.SaveToFile<Note>(note, path);
             OnNotesChanged(this, EventArgs.Empty);
         }
-
+        /// <summary>
+        /// Opens a <see cref="Note"/> for a given path
+        /// </summary>
+        /// <param name="fullPathName"></param>
+        /// <returns>A note</returns>
+        /// <returns><see cref="FileNotFoundException"/> if File not found</returns>
         public Note OpenNote(string fullPathName)
         {
-            if (!File.Exists(fullPathName))
+            if (String.IsNullOrEmpty(fullPathName))
             {
-                throw new FileNotFoundException("This note file doesn't exist!");
+                throw new ArgumentNullException(nameof(fullPathName));
             }
             return _storageService.OpenFile<Note>(fullPathName);
         }

@@ -14,7 +14,11 @@ namespace NoteKeeperXamarin.Services
 
         public T OpenFile<T>(string path)
         {
-            using (var reader= new StreamReader(path))
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("This note file doesn't exist!");
+            }
+            using (var reader = new StreamReader(path))
             {
                 JsonSerializer serializer = new JsonSerializer();
                 T obj = (T)serializer.Deserialize(reader, typeof(T));
@@ -32,7 +36,7 @@ namespace NoteKeeperXamarin.Services
         }
 
         public void DeleteFile<T>(string path)
-        { 
+        {
             File.Delete(path);
         }
     }

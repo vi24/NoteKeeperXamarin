@@ -36,11 +36,12 @@ namespace NoteKeeperXamarin.Tests
         {
             //Arrange
             SetUp();
+            string combinedPathToFile = Path.Combine(PATH, "test" + CSV_EXTENSION);
             CSVStorageService storageService = new CSVStorageService();
             Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             //Act
-            storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + CSV_EXTENSION));
-            Note actualNote = storageService.OpenFile<Note>(Path.Combine(PATH, "test" + CSV_EXTENSION));
+            storageService.SaveToFile(expectedNote, combinedPathToFile);
+            Note actualNote = storageService.OpenFile<Note>(combinedPathToFile);
             //Assert
             Assert.Equal(expectedNote.Title, actualNote.Title);
             Assert.Equal(expectedNote.Text, actualNote.Text);

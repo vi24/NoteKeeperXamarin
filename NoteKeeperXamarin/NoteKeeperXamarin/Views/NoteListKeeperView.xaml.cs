@@ -18,7 +18,6 @@ namespace NoteKeeperXamarin.Views
         public NoteListKeeperView()
         {
             InitializeComponent();
-            Locator.CurrentMutable.Register(() => new CSVStorageService(), typeof(IStorageService));
             this.BindingContext = new NotesListViewModel();
         }
     }

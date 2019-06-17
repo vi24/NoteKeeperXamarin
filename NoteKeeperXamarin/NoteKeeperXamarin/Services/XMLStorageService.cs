@@ -29,6 +29,10 @@ namespace NoteKeeperXamarin.Services
 
         public T OpenFile<T>(string path)
         {
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("This note file doesn't exist!");
+            }
             _serializer = new DataContractSerializer(typeof(T));
             using (Stream stream = File.OpenRead(path))
             {

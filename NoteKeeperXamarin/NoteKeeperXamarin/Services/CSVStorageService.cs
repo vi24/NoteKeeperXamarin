@@ -22,6 +22,11 @@ namespace NoteKeeperXamarin.Services
 
         public T OpenFile<T>(string path)
         {
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("This note file doesn't exist!");
+            }
+
             using (var reader = new StreamReader(path))
             {
                 using (var csv = new CsvReader(reader))
