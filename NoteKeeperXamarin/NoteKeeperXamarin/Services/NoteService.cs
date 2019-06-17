@@ -9,7 +9,6 @@ namespace NoteKeeperXamarin.Services
 {
     public class NoteService
     {
-        private const string STATIC_FILE_NAME = "foo";
         private readonly IStorageService _storageService;
         private readonly string _noteFilesDirectory;
 
@@ -48,11 +47,6 @@ namespace NoteKeeperXamarin.Services
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
-        public void SaveWithStaticFileName(Note note)
-        { 
-            _storageService.SaveToFile<Note>(note, Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName));
-        }
-
         public string SaveWithDynamicFileName(Note note)
         {
             string path = GetFullPathOfDirectoryAndFileName(note);
@@ -74,20 +68,6 @@ namespace NoteKeeperXamarin.Services
                 throw new FileNotFoundException("This note file doesn't exist!");
             }
             return _storageService.OpenFile<Note>(fullPathName);
-        }
-
-        public Note OpenLastSavedNote()
-        {
-            string pathToLastSavedNote = Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
-            if (!File.Exists(pathToLastSavedNote)) return new Note();
-            Note note = _storageService.OpenFile<Note>(Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName));
-            return note;
-        }
-
-        public void DeleteFooNoteFile()
-        {
-            string path = Path.Combine(_noteFilesDirectory, STATIC_FILE_NAME + _storageService.FileExtensionName);
-            _storageService.DeleteFile<Note>(path);
         }
 
         public void DeleteNoteFile(string path)

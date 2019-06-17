@@ -54,11 +54,12 @@ namespace NoteKeeperXamarin.Tests
             SetUp();
             NoteService noteService = new NoteService(new CSVStorageService(), PATH);
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
-            noteService.SaveWithStaticFileName(note);
+            string path = noteService.SaveWithDynamicFileName(note);
             long createdFileTime = note.Created.ToFileTime();
-            noteService.OpenLastSavedNote();
+            note = noteService.OpenNote(path);
             //Act
-            noteService.SaveWithStaticFileName(note);
+            noteService.SaveWithDynamicFileName(note, path);
+            note = noteService.OpenNote(path);
             long lastEditedFileTime = note.LastEdited.ToFileTime();
             //Assert
             Assert.True(lastEditedFileTime > createdFileTime);
