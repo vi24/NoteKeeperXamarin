@@ -21,21 +21,9 @@ namespace NoteKeeperXamarin.Services
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
-        private void OnNotesChanged(object sender, EventArgs e)
+        public NoteService(string path)
         {
-            NotesChanged?.Invoke(this, e);
-        }
-
-        public NoteService(IStorageService service, string path)
-        {
-            if (service == null)
-            {
-                _storageService = new JSONStorageService();
-            }
-            else
-            {
-                _storageService = service;
-            }
+            _storageService = Locator.Current.GetService<IStorageService>();
             if (String.IsNullOrWhiteSpace(path))
             {
                 _noteFilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "SerializedNotes");
@@ -45,6 +33,11 @@ namespace NoteKeeperXamarin.Services
                 _noteFilesDirectory = path;
             }
             Directory.CreateDirectory(_noteFilesDirectory);
+        }
+
+        private void OnNotesChanged(object sender, EventArgs e)
+        {
+            NotesChanged?.Invoke(this, e);
         }
 
         public string SaveWithDynamicFileName(Note note)

@@ -1,5 +1,6 @@
 using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
+using Splat;
 using System;
 using System.IO;
 using Xunit;
@@ -14,6 +15,7 @@ namespace NoteKeeperChallenge.Tests
         private void SetUp()
         {
             Directory.CreateDirectory(PATH);
+            Locator.CurrentMutable.Register(() => new JSONStorageService(), typeof(IStorageService));
         }
 
         private void TearDown()
@@ -32,7 +34,7 @@ namespace NoteKeeperChallenge.Tests
         {
             //Arrange
             SetUp();
-            JSONStorageService storageService = new JSONStorageService();
+            IStorageService storageService = Locator.Current.GetService<IStorageService>();
             Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             //Act
             storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + JSON_EXTENSION));
@@ -46,10 +48,10 @@ namespace NoteKeeperChallenge.Tests
         }
 
         [Fact]
-        public void SaveWithStaticFileName_GivenJSONServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
+        public void SaveDynamicFileName_GivenJSONServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
         {
             SetUp();
-            NoteService noteService = new NoteService(new JSONStorageService(), PATH);
+            NoteService noteService = new NoteService(PATH);
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             string path = noteService.SaveWithDynamicFileName(note);
             long createdFileTime = note.Created.ToFileTime();
@@ -66,7 +68,7 @@ namespace NoteKeeperChallenge.Tests
         [Fact]
         public void SaveToFile_GivenJSONServiceAndNonExistingPath_WhenSavingFile_ThenItShouldThrowDirectoryNotFoundException()
         {
-            JSONStorageService storageService = new JSONStorageService();
+            IStorageService storageService = Locator.Current.GetService<IStorageService>();
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             Assert.Throws<DirectoryNotFoundException>(() => storageService.SaveToFile<Note>(note, @"C:\NotExistingPath\A"));
         }

@@ -1,5 +1,6 @@
 ﻿using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
+using Splat;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,7 @@ namespace NoteKeeperXamarin.Tests
         private void SetUp()
         {
             Directory.CreateDirectory(PATH);
+            Locator.CurrentMutable.Register(() => new CSVStorageService(), typeof(IStorageService));
         }
 
         private void TearDown()
@@ -48,11 +50,11 @@ namespace NoteKeeperXamarin.Tests
         }
 
         [Fact]
-        public void SaveWithStaticFileName_GivenCSVServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
+        public void SaveDynamicFileName_GivenCSVServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
         {
             //Arrange
             SetUp();
-            NoteService noteService = new NoteService(new CSVStorageService(), PATH);
+            NoteService noteService = new NoteService(PATH);
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             string path = noteService.SaveWithDynamicFileName(note);
             long createdFileTime = note.Created.ToFileTime();
