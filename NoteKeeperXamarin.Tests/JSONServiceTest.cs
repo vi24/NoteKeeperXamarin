@@ -1,4 +1,4 @@
-﻿using NoteKeeperXamarin.Models;
+using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
 using System;
 using System.IO;
@@ -6,10 +6,10 @@ using Xunit;
 
 namespace NoteKeeperChallenge.Tests
 {
-    public class OperatorXMLServiceTest
+    public class JSONServiceTest
     {
         private readonly string PATH = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\SerializedNotesTest");
-        private const string XML_EXTENSION = ".xml";
+        private const string JSON_EXTENSION = ".json";
 
         private void SetUp()
         {
@@ -21,22 +21,22 @@ namespace NoteKeeperChallenge.Tests
             DirectoryInfo dInfo = new DirectoryInfo(PATH);
             foreach (FileInfo file in dInfo.GetFiles())
             {
-                if (!(Path.GetExtension(file.FullName) == XML_EXTENSION)) return;
+                if (!(Path.GetExtension(file.FullName) == JSON_EXTENSION)) return;
                 file.Delete();
             }
             Directory.Delete(PATH);
         }
-
+        
         [Fact]
         public void GivenJSONServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
         {
             //Arrange
             SetUp();
-            XMLStorageService storageService = new XMLStorageService();
+            JSONStorageService storageService = new JSONStorageService();
             Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             //Act
-            storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + XML_EXTENSION));
-            Note actualNote = storageService.OpenFile<Note>(Path.Combine(PATH, "test" + XML_EXTENSION));
+            storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + JSON_EXTENSION));
+            Note actualNote = storageService.OpenFile<Note>(Path.Combine(PATH,"test" + JSON_EXTENSION));
             //Assert
             Assert.Equal(expectedNote.Title, actualNote.Title);
             Assert.Equal(expectedNote.Text, actualNote.Text);
@@ -50,7 +50,7 @@ namespace NoteKeeperChallenge.Tests
         {
             //Arrange
             SetUp();
-            NoteService noteService = new NoteService(new XMLStorageService(), PATH);
+            NoteService noteService = new NoteService(new JSONStorageService(), PATH);
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             noteService.SaveWithStaticFileName(note);
             long createdFileTime = note.Created.ToFileTime();
@@ -66,7 +66,7 @@ namespace NoteKeeperChallenge.Tests
         [Fact]
         public void SaveToFile_GivenJSONServiceAndNonExistingPath_WhenSavingFile_ThenItShouldThrowDirectoryNotFoundException()
         {
-            XMLStorageService storageService = new XMLStorageService();
+            JSONStorageService storageService = new JSONStorageService();
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             Assert.Throws<DirectoryNotFoundException>(() => storageService.SaveToFile<Note>(note, @"C:\NotExistingPath\A"));
         }

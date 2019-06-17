@@ -1,15 +1,17 @@
-using NoteKeeperXamarin.Models;
+﻿using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Xunit;
 
-namespace NoteKeeperChallenge.Tests
+namespace NoteKeeperXamarin.Tests
 {
-    public class OperatorJSONServiceTest
+    public class CSVServiceTest
     {
         private readonly string PATH = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\SerializedNotesTest");
-        private const string JSON_EXTENSION = ".json";
+        private const string CSV_EXTENSION = ".csv";
 
         private void SetUp()
         {
@@ -21,22 +23,22 @@ namespace NoteKeeperChallenge.Tests
             DirectoryInfo dInfo = new DirectoryInfo(PATH);
             foreach (FileInfo file in dInfo.GetFiles())
             {
-                if (!(Path.GetExtension(file.FullName) == JSON_EXTENSION)) return;
+                if (!(Path.GetExtension(file.FullName) == CSV_EXTENSION)) return;
                 file.Delete();
             }
             Directory.Delete(PATH);
         }
-        
+
         [Fact]
-        public void GivenJSONServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
+        public void GivenCSVServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
         {
             //Arrange
             SetUp();
-            JSONStorageService storageService = new JSONStorageService();
+            CSVStorageService storageService = new CSVStorageService();
             Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             //Act
-            storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + JSON_EXTENSION));
-            Note actualNote = storageService.OpenFile<Note>(Path.Combine(PATH,"test" + JSON_EXTENSION));
+            storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + CSV_EXTENSION));
+            Note actualNote = storageService.OpenFile<Note>(Path.Combine(PATH, "test" + CSV_EXTENSION));
             //Assert
             Assert.Equal(expectedNote.Title, actualNote.Title);
             Assert.Equal(expectedNote.Text, actualNote.Text);
@@ -46,11 +48,11 @@ namespace NoteKeeperChallenge.Tests
         }
 
         [Fact]
-        public void SaveWithStaticFileName_GivenJSONServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
+        public void SaveWithStaticFileName_GivenCSVServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
         {
             //Arrange
             SetUp();
-            NoteService noteService = new NoteService(new JSONStorageService(), PATH);
+            NoteService noteService = new NoteService(new CSVStorageService(), PATH);
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             noteService.SaveWithStaticFileName(note);
             long createdFileTime = note.Created.ToFileTime();
@@ -64,9 +66,9 @@ namespace NoteKeeperChallenge.Tests
         }
 
         [Fact]
-        public void SaveToFile_GivenJSONServiceAndNonExistingPath_WhenSavingFile_ThenItShouldThrowDirectoryNotFoundException()
+        public void SaveToFile_GivenCSVServiceAndNonExistingPath_WhenSavingFile_ThenItShouldThrowDirectoryNotFoundException()
         {
-            JSONStorageService storageService = new JSONStorageService();
+            CSVStorageService storageService = new CSVStorageService();
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             Assert.Throws<DirectoryNotFoundException>(() => storageService.SaveToFile<Note>(note, @"C:\NotExistingPath\A"));
         }

@@ -14,20 +14,20 @@ namespace NoteKeeperXamarin.Services
 
         public T OpenFile<T>(string path)
         {
-            using (StreamReader file = File.OpenText(path))
+            using (var reader= new StreamReader(path))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                T obj = (T)serializer.Deserialize(file, typeof(T));
+                T obj = (T)serializer.Deserialize(reader, typeof(T));
                 return obj;
             }
         }
 
         public void SaveToFile<T>(T obj, string path)
         {
-            using( StreamWriter file = File.CreateText(path))
+            using (var writer = new StreamWriter(path))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, obj);
+                serializer.Serialize(writer, obj);
             }
         }
 
