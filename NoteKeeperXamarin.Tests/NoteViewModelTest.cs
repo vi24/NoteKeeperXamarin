@@ -26,7 +26,7 @@ namespace NoteKeeperXamarin.Tests
             mock.Setup(x => x.OpenFile<Note>(It.IsAny<string>())).Returns(Task.FromResult(note));
             NoteService noteService = new NoteService(String.Empty, mock.Object);
             //Act
-            NoteViewModel noteVM = await NoteViewModel.GetInstance(noteService, "foo");
+            NoteViewModel noteVM = await NoteViewModel.CreateAsyncNoteVM(noteService, "foo");
             //Assert
             Assert.Equal(noteVM.NoteTitleEntry, fooTitle);
             //TearDown

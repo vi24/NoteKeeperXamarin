@@ -14,10 +14,17 @@ namespace NoteKeeperXamarin.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NoteKeeperView : ContentPage
     {
-        public NoteKeeperView(NoteService noteService, string path)
+        public NoteKeeperView(NoteService noteService, string path = null)
         {
             InitializeComponent();
-            this.BindingContext = NoteViewModel.GetInstance(noteService, path);
+            if (path == null)
+            {
+                this.BindingContext = new NoteViewModel(noteService);
+            }
+            else
+            {
+                this.BindingContext = new NoteViewModel(noteService, path);
+            }
         }
     }
 }

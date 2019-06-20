@@ -1,4 +1,5 @@
-﻿using NoteKeeperXamarin.Models;
+﻿using NoteKeeperXamarin.EventArguments;
+using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
 using ReactiveUI;
 using System;
@@ -19,12 +20,19 @@ namespace NoteKeeperXamarin.ViewModels
         private string _createdString;
         private string _lastEditedString;
         private bool _canDelete;
+        private event NoteChangedEventHandler NoteChanged;
+        private delegate void NoteChangedEventHandler(object sender, NoteChangedEventArgs args);
 
-        public NoteViewModel(NoteService noteService)
+        public NoteViewModel(NoteService noteService, string path = null)
         {
             _noteService = noteService;
-            SaveNote = ReactiveCommand.CreateFromTask<Unit>((Unit) => SaveNoteExecute(), CanExecuteSave);
-            DeleteNote = ReactiveCommand.CreateFromTask<Unit>((Unit) => DeleteNoteExecute(), CanExecuteDelete);
+            SaveNote = ReactiveCommand.CreateFromTask(SaveNoteExecute, CanExecuteSave);
+            DeleteNote = ReactiveCommand.CreateFromTask(DeleteNoteExecute, CanExecuteDelete);
+            NoteChanged += OpenNoteAsync;
+            if (path != null)
+            {
+                OnNoteChanged(path);
+            }
             UpdateNoteView();
         }
 
@@ -99,6 +107,10 @@ namespace NoteKeeperXamarin.ViewModels
         public IObservable<bool> CanExecuteDelete => this.WhenAnyValue(x => x.CanDelete);
 
         #endregion
+        private void OnNoteChanged(string path)
+        {
+            NoteChanged?.Invoke(this, new NoteChangedEventArgs(path));
+        }
 
         public async Task SaveNoteExecute()
         {
@@ -126,31 +138,6 @@ namespace NoteKeeperXamarin.ViewModels
             await Application.Current.MainPage.Navigation.PopAsync();
         }
 
-        public static async Task<NoteViewModel> GetInstance(NoteService noteService, string path)
-        {
-            NoteViewModel noteViewModel = new NoteViewModel(noteService);
-            if (!String.IsNullOrEmpty(path))
-            {
-                await noteViewModel.PopulateNoteViewWithNoteData(path);
-            }
-            return noteViewModel;
-        }
-
-        private async Task PopulateNoteViewWithNoteData(string path)
-        {
-            try
-            {
-                _note = await _noteService.OpenNote(path);
-                CanDelete = true;
-                _notePath = path;
-            }
-            catch (Exception)
-            {
-                //Silently ignoring
-            }
-            UpdateNoteView();
-        }
-
         private void UpdateNoteView()
         {
             if (_note != null)
@@ -167,6 +154,21 @@ namespace NoteKeeperXamarin.ViewModels
                 CreatedString = String.Empty;
                 LastEditedString = String.Empty;
             }
+        }
+
+        private async void OpenNoteAsync(object sender, NoteChangedEventArgs e)
+        {
+            try
+            {
+                _note = await _noteService.OpenNote(e.Path);
+                CanDelete = true;
+                _notePath = e.Path;
+            }
+            catch (Exception)
+            {
+                //Silently ignoring
+            }
+            UpdateNoteView();
         }
     }
 }
