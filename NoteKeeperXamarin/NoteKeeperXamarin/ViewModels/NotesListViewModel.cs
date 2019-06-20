@@ -22,7 +22,7 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService.NotesChanged += UpdateNotesList;
             AddNoteCommand = ReactiveCommand.CreateFromTask<Unit>( (Unit) => AddNoteExecuteAsync());
             OpenNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => OpenNoteExecuteAsync(filename));
-            DeleteNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => DeleteNoteExecute(filename));
+            DeleteNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => DeleteNoteExecuteAsync(filename));
             _filePaths = _noteService.GetPathsOfAllExistingNoteFiles();
             CreateNotesList();
         }
@@ -32,7 +32,7 @@ namespace NoteKeeperXamarin.ViewModels
         public ReactiveCommand<string ,Unit> DeleteNoteCommand { get; }
         public List<string> NoteItemList { get; private set; }
 
-        private async Task DeleteNoteExecute(string filename)
+        private async Task DeleteNoteExecuteAsync(string filename)
         {
             var file = _filePaths.Where(filepath => Path.GetFileName(filepath) == filename).SingleOrDefault();
 
@@ -42,7 +42,7 @@ namespace NoteKeeperXamarin.ViewModels
             }
             else
             {
-                _noteService.DeleteNoteFile(file);
+                await _noteService.DeleteNoteFile(file);
                 this.RaisePropertyChanged(nameof(NoteItemList));
             }
         }

@@ -3,6 +3,7 @@ using Splat;
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 
 namespace NoteKeeperXamarin.Services
@@ -40,10 +41,10 @@ namespace NoteKeeperXamarin.Services
             NotesChanged?.Invoke(this, e);
         }
 
-        public string SaveWithDynamicFileName(Note note)
+        public async Task<string> SaveWithDynamicFileName(Note note)
         {
             string path = GetFullPathOfDirectoryAndFileName(note);
-            _storageService.SaveToFile<Note>(note, path);
+            await _storageService.SaveToFile<Note>(note, path);
             OnNotesChanged(this, EventArgs.Empty);
             return path;
         }
@@ -59,19 +60,19 @@ namespace NoteKeeperXamarin.Services
         /// <param name="fullPathName"></param>
         /// <returns>A note</returns>
         /// <returns><see cref="FileNotFoundException"/> if File not found</returns>
-        public Note OpenNote(string fullPathName)
+        public async Task<Note> OpenNote(string fullPathName)
         {
             if (String.IsNullOrEmpty(fullPathName))
             {
                 throw new ArgumentNullException(nameof(fullPathName));
             }
-            return _storageService.OpenFile<Note>(fullPathName);
+            return await _storageService.OpenFile<Note>(fullPathName);
         }
 
-        public void DeleteNoteFile(string path)
+        public async Task DeleteNoteFile(string path)
         {
             if (String.IsNullOrEmpty(path)) return;
-            _storageService.DeleteFile<Note>(path);
+            await _storageService.DeleteFile<Note>(path);
             OnNotesChanged(this, EventArgs.Empty);
         }
 

@@ -30,15 +30,15 @@ namespace NoteKeeperChallenge.Tests
         }
         
         [Fact]
-        public void GivenJSONServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
+        public async void GivenJSONServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
         {
             //Arrange
             SetUp();
             IStorageService storageService = Locator.Current.GetService<IStorageService>();
             Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             //Act
-            storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + JSON_EXTENSION));
-            Note actualNote = storageService.OpenFile<Note>(Path.Combine(PATH,"test" + JSON_EXTENSION));
+            await storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + JSON_EXTENSION));
+            Note actualNote = await storageService.OpenFile<Note>(Path.Combine(PATH,"test" + JSON_EXTENSION));
             //Assert
             Assert.Equal(expectedNote.Title, actualNote.Title);
             Assert.Equal(expectedNote.Text, actualNote.Text);
@@ -48,17 +48,17 @@ namespace NoteKeeperChallenge.Tests
         }
 
         [Fact]
-        public void SaveDynamicFileName_GivenJSONServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
+        public async void SaveDynamicFileName_GivenJSONServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
         {
             SetUp();
             NoteService noteService = new NoteService(PATH);
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             string path = noteService.SaveWithDynamicFileName(note);
             long createdFileTime = note.Created.ToFileTime();
-            note = noteService.OpenNote(path);
+            note = await noteService.OpenNote(path);
             //Act
             noteService.SaveWithDynamicFileName(note, path);
-            note = noteService.OpenNote(path);
+            note = await noteService.OpenNote(path);
             long lastEditedFileTime = note.LastEdited.ToFileTime();
             //Assert
             Assert.True(lastEditedFileTime > createdFileTime);
@@ -66,11 +66,11 @@ namespace NoteKeeperChallenge.Tests
         }
 
         [Fact]
-        public void SaveToFile_GivenJSONServiceAndNonExistingPath_WhenSavingFile_ThenItShouldThrowDirectoryNotFoundException()
+        public async System.Threading.Tasks.Task SaveToFile_GivenJSONServiceAndNonExistingPath_WhenSavingFile_ThenItShouldThrowDirectoryNotFoundException()
         {
             IStorageService storageService = Locator.Current.GetService<IStorageService>();
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
-            Assert.Throws<DirectoryNotFoundException>(() => storageService.SaveToFile<Note>(note, @"C:\NotExistingPath\A"));
+            await Assert.ThrowsAsync<DirectoryNotFoundException>(() => storageService.SaveToFile<Note>(note, @"C:\NotExistingPath\A"));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace NoteKeeperXamarin.Services
 {
@@ -12,7 +13,7 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".json";
         }
 
-        public T OpenFile<T>(string path)
+        public async Task<T> OpenFile<T>(string path)
         {
             if (!File.Exists(path))
             {
@@ -21,23 +22,23 @@ namespace NoteKeeperXamarin.Services
             using (var reader = new StreamReader(path))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                T obj = (T)serializer.Deserialize(reader, typeof(T));
+                T obj = (T) await (Task.Run(() => serializer.Deserialize(reader, typeof(T))));
                 return obj;
             }
         }
 
-        public void SaveToFile<T>(T obj, string path)
+        public async Task SaveToFile<T>(T obj, string path)
         {
             using (var writer = new StreamWriter(path))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(writer, obj);
+                await Task.Run(() => serializer.Serialize(writer, obj));
             }
         }
 
-        public void DeleteFile<T>(string path)
+        public async Task DeleteFile<T>(string path)
         {
-            File.Delete(path);
+            await Task.Run(() => File.Delete(path));
         }
     }
 }

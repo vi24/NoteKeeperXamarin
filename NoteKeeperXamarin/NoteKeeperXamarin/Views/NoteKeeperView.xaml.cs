@@ -17,7 +17,7 @@ namespace NoteKeeperXamarin.Views
         public NoteKeeperView(NoteService noteService, string path)
         {
             InitializeComponent();
-            this.BindingContext = new NoteViewModel(noteService, path);
+            this.BindingContext = NoteViewModel.GetInstance(noteService, path);
         }
     }
 }

@@ -30,15 +30,15 @@ namespace NoteKeeperChallenge.Tests
         }
 
         [Fact]
-        public void GivenXMLServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
+        public async void GivenXMLServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
         {
             //Arrange
             SetUp();
             IStorageService storageService = Locator.Current.GetService<IStorageService>();
             Note expectedNote = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             //Act
-            storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + XML_EXTENSION));
-            Note actualNote = storageService.OpenFile<Note>(Path.Combine(PATH, "test" + XML_EXTENSION));
+            await storageService.SaveToFile(expectedNote, Path.Combine(PATH, "test" + XML_EXTENSION));
+            Note actualNote = await storageService.OpenFile<Note>(Path.Combine(PATH, "test" + XML_EXTENSION));
             //Assert
             Assert.Equal(expectedNote.Title, actualNote.Title);
             Assert.Equal(expectedNote.Text, actualNote.Text);
@@ -48,7 +48,7 @@ namespace NoteKeeperChallenge.Tests
         }
 
         [Fact]
-        public void SaveDynamicFileName_GivenXMLServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
+        public async void SaveDynamicFileName_GivenXMLServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
         {
             //Arrange
             SetUp();
@@ -56,10 +56,10 @@ namespace NoteKeeperChallenge.Tests
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
             string path = noteService.SaveWithDynamicFileName(note);
             long createdFileTime = note.Created.ToFileTime();
-            note = noteService.OpenNote(path);
+            note = await noteService.OpenNote(path);
             //Act
             noteService.SaveWithDynamicFileName(note, path);
-            note = noteService.OpenNote(path);
+            note = await noteService.OpenNote(path);
             long lastEditedFileTime = note.LastEdited.ToFileTime();
             //Assert
             Assert.True(lastEditedFileTime > createdFileTime);
@@ -71,7 +71,7 @@ namespace NoteKeeperChallenge.Tests
         {
             IStorageService storageService = Locator.Current.GetService<IStorageService>();
             Note note = new Note("Titel", "Foo", DateTime.Now, DateTime.Now);
-            Assert.Throws<DirectoryNotFoundException>(() => storageService.SaveToFile<Note>(note, @"C:\NotExistingPath\A"));
+            Assert.ThrowsAsync<DirectoryNotFoundException>(() => storageService.SaveToFile<Note>(note, @"C:\NotExistingPath\A"));
         }
     }
 }

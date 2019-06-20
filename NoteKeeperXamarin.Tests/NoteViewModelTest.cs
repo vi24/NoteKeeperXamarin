@@ -4,14 +4,18 @@ using NoteKeeperXamarin.Services;
 using NoteKeeperXamarin.ViewModels;
 using System;
 using System.IO;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace NoteKeeperXamarin.Tests
 {
     public class NoteViewModelTest
     {
+        private Task<Expression<Action<IStorageService>>> x;
+
         [Fact]
-        public void GivenNote_WhenOpeningNote_ThenNoteTitleAndCreatedAndLastEditedShouldBeSetInView()
+        public async Task GivenNote_WhenOpeningNote_ThenNoteTitleAndCreatedAndLastEditedShouldBeSetInViewAsync()
         {
             //Arrange
             string fooTitle = "FooTitle";
@@ -19,10 +23,10 @@ namespace NoteKeeperXamarin.Tests
             Note note = new Note { Created = DateTime.Now, LastEdited = DateTime.Now, Text = fooText, Title = fooTitle };
             
             var mock = new Mock<IStorageService>();
-            mock.Setup(x => x.OpenFile<Note>(It.IsAny<string>())).Returns(note);
+            mock.Setup(x => x.OpenFile<Note>(It.IsAny<string>())).Returns(Task.FromResult(note));
             NoteService noteService = new NoteService(String.Empty, mock.Object);
             //Act
-            NoteViewModel noteVM = new NoteViewModel(noteService, "foo");
+            NoteViewModel noteVM = await NoteViewModel.GetInstance(noteService, "foo");
             //Assert
             Assert.Equal(noteVM.NoteTitleEntry, fooTitle);
             //TearDown

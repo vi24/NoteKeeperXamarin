@@ -4,6 +4,7 @@ using ReactiveUI;
 using System;
 using System.IO;
 using System.Reactive;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
@@ -22,26 +23,8 @@ namespace NoteKeeperXamarin.ViewModels
         public NoteViewModel(NoteService noteService)
         {
             _noteService = noteService;
-            SaveNote = ReactiveCommand.Create(SaveNoteExecute, CanExecuteSave);
-            DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, CanExecuteDelete);
-            UpdateNoteView();
-        }
-
-        public NoteViewModel(NoteService noteService, string path)
-        {
-            _noteService = noteService;
-            SaveNote = ReactiveCommand.Create(SaveNoteExecute, CanExecuteSave);
-            DeleteNote = ReactiveCommand.Create(DeleteNoteExecute, CanExecuteDelete);
-            try
-            {
-                _note = _noteService.OpenNote(path);
-                CanDelete = true;
-                _notePath = path;
-            }
-            catch (Exception)
-            {
-                //Silently ignoring
-            }
+            SaveNote = ReactiveCommand.CreateFromTask<Unit>( (Unit) => SaveNoteExecute(), CanExecuteSave);
+            DeleteNote = ReactiveCommand.CreateFromTask<Unit>((Unit) => DeleteNoteExecute(), CanExecuteDelete);
             UpdateNoteView();
         }
 
@@ -117,7 +100,7 @@ namespace NoteKeeperXamarin.ViewModels
 
         #endregion
 
-        public void SaveNoteExecute()
+        public async Task SaveNoteExecute()
         {
             if (_note != null)
             {
@@ -129,18 +112,43 @@ namespace NoteKeeperXamarin.ViewModels
             else
             {
                 _note = new Note(NoteTitleEntry, NoteTextEditor, DateTime.Now, DateTime.Now);
-                _notePath = _noteService.SaveWithDynamicFileName(_note);
+                _notePath = await _noteService.SaveWithDynamicFileName(_note);
             }
             CanDelete = true;
             UpdateNoteView();
         }
 
-        public void DeleteNoteExecute()
+        public async Task DeleteNoteExecute()
         {
-            _noteService.DeleteNoteFile(_notePath);
+            await _noteService.DeleteNoteFile(_notePath);
             UpdateNoteView();
             CanDelete = false;
-            Application.Current.MainPage.Navigation.PopAsync();
+            await Application.Current.MainPage.Navigation.PopAsync();
+        }
+
+        public static async Task<NoteViewModel> GetInstance(NoteService noteService, string path)
+        {
+            NoteViewModel noteViewModel = new NoteViewModel(noteService);
+            if (!String.IsNullOrEmpty(path))
+            {
+                await noteViewModel.PopulateNoteViewWithNoteData(path);
+            }
+            return noteViewModel;
+        }
+
+        private async Task PopulateNoteViewWithNoteData(string path)
+        {
+            try
+            {
+                _note = await _noteService.OpenNote(path);
+                CanDelete = true;
+                _notePath = path;
+            }
+            catch (Exception)
+            {
+                //Silently ignoring
+            }
+            UpdateNoteView();
         }
 
         private void UpdateNoteView()

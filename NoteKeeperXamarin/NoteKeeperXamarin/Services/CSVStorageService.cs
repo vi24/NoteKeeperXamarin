@@ -1,8 +1,7 @@
 ﻿using CsvHelper;
 using System;
 using System.IO;
-
-
+using System.Threading.Tasks;
 
 namespace NoteKeeperXamarin.Services
 {
@@ -15,12 +14,12 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".csv";
         }
 
-        public void DeleteFile<T>(string path)
+        public async Task DeleteFile<T>(string path)
         {
-            File.Delete(path);
+            await Task.Run(() => File.Delete(path));
         }
 
-        public T OpenFile<T>(string path)
+        public async Task<T> OpenFile<T>(string path)
         {
             if (!File.Exists(path))
             {
@@ -31,7 +30,7 @@ namespace NoteKeeperXamarin.Services
             {
                 using (var csv = new CsvReader(reader))
                 {
-                    csv.Read();
+                    await csv.ReadAsync();
                     csv.Configuration.HasHeaderRecord = false;
                     T obj = csv.GetRecord<T>();
                     return obj;
@@ -39,13 +38,13 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
-        public void SaveToFile<T>(T obj, string path)
+        public async Task SaveToFile<T>(T obj, string path)
         {
             using (StreamWriter file = File.CreateText(path))
             {
                 using (var csvWriter = new CsvWriter(file))
                 {
-                    csvWriter.WriteRecord(obj);
+                    await Task.Run(() => csvWriter.WriteRecord(obj));
                 }
             }
         }
