@@ -49,9 +49,9 @@ namespace NoteKeeperXamarin.Services
             return path;
         }
 
-        public void SaveWithDynamicFileName(Note note, string path)
+        public async Task SaveWithDynamicFileName(Note note, string path)
         {
-            _storageService.SaveToFile<Note>(note, path);
+            await _storageService.SaveToFile<Note>(note, path);
             OnNotesChanged(this, EventArgs.Empty);
         }
         /// <summary>

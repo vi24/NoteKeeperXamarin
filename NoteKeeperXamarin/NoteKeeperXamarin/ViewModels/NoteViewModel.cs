@@ -23,7 +23,7 @@ namespace NoteKeeperXamarin.ViewModels
         public NoteViewModel(NoteService noteService)
         {
             _noteService = noteService;
-            SaveNote = ReactiveCommand.CreateFromTask<Unit>( (Unit) => SaveNoteExecute(), CanExecuteSave);
+            SaveNote = ReactiveCommand.CreateFromTask<Unit>((Unit) => SaveNoteExecute(), CanExecuteSave);
             DeleteNote = ReactiveCommand.CreateFromTask<Unit>((Unit) => DeleteNoteExecute(), CanExecuteDelete);
             UpdateNoteView();
         }
@@ -107,7 +107,7 @@ namespace NoteKeeperXamarin.ViewModels
                 _note.Title = NoteTitleEntry;
                 _note.Text = NoteTextEditor;
                 _note.LastEdited = DateTime.Now;
-                _noteService.SaveWithDynamicFileName(_note, _notePath);
+                await _noteService.SaveWithDynamicFileName(_note, _notePath);
             }
             else
             {
