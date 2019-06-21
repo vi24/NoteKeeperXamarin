@@ -30,10 +30,10 @@ namespace NoteKeeperXamarin.Services
             {
                 using (var csv = new CsvReader(reader))
                 {
-                    csv.Read();
+                    await csv.ReadAsync();
                     csv.Configuration.HasHeaderRecord = false;
                     T obj = csv.GetRecord<T>();
-                    return await Task.FromResult(obj);
+                    return obj;
                 }
             }
         }
