@@ -1,6 +1,7 @@
 ﻿using NoteKeeperXamarin.Models;
 using Splat;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -8,7 +9,7 @@ using Xamarin.Essentials;
 
 namespace NoteKeeperXamarin.Services
 {
-    public class NoteService
+    public class NoteService: INoteService
     {
         private readonly IStorageService _storageService;
         private readonly string _noteFilesDirectory;
@@ -36,23 +37,23 @@ namespace NoteKeeperXamarin.Services
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
-        private void OnNotesChanged(object sender, EventArgs e)
+        private void OnNotesChanged()
         {
-            NotesChanged?.Invoke(this, e);
+            NotesChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public async Task<string> SaveWithDynamicFileName(Note note)
+        public async Task<string> SaveNote(Note note)
         {
             string path = GetFullPathOfDirectoryAndFileName(note);
-            await _storageService.SaveToFile<Note>(note, path);
-            OnNotesChanged(this, EventArgs.Empty);
+            await _storageService.Save<Note>(note, path);
+            OnNotesChanged();
             return path;
         }
 
-        public async Task SaveWithDynamicFileName(Note note, string path)
+        public async Task SaveNote(Note note, string path)
         {
-            await _storageService.SaveToFile<Note>(note, path);
-            OnNotesChanged(this, EventArgs.Empty);
+            await _storageService.Save<Note>(note, path);
+            OnNotesChanged();
         }
         /// <summary>
         /// Opens a <see cref="Note"/> for a given path
@@ -66,14 +67,14 @@ namespace NoteKeeperXamarin.Services
             {
                 throw new ArgumentNullException(nameof(fullPathName));
             }
-            return await _storageService.OpenFile<Note>(fullPathName);
+            return await _storageService.Open<Note>(fullPathName);
         }
 
-        public async Task DeleteNoteFile(string path)
+        public async Task DeleteNote(string path)
         {
             if (String.IsNullOrEmpty(path)) return;
-            await _storageService.DeleteFile<Note>(path);
-            OnNotesChanged(this, EventArgs.Empty);
+            await _storageService.Delete<Note>(path);
+            OnNotesChanged();
         }
 
         public string[] GetPathsOfAllExistingNoteFiles()
@@ -84,7 +85,8 @@ namespace NoteKeeperXamarin.Services
         private string GenerateFileName(Note note)
         {
             if (note == null) return String.Empty;
-            return Regex.Replace(note.Title, @"\s+", "") + note.Created.ToFileTime() + _storageService.FileExtensionName;
+            DateTime dateTime = DateTime.Parse(note.CreatedRoundTrip, null, DateTimeStyles.RoundtripKind);
+            return Regex.Replace(note.Title, @"\s+", "") + dateTime.ToFileTime() + _storageService.FileExtensionName;
         }
 
         private string GetFullPathOfDirectoryAndFileName(Note note)

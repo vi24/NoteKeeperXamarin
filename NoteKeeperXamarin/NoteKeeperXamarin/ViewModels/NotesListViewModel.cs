@@ -42,7 +42,7 @@ namespace NoteKeeperXamarin.ViewModels
             }
             else
             {
-                await _noteService.DeleteNoteFile(file);
+                await _noteService.DeleteNote(file);
                 this.RaisePropertyChanged(nameof(NoteItemList));
             }
         }

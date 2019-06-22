@@ -10,14 +10,14 @@ namespace NoteKeeperXamarin.Models
         public string Text { get; set; }
         [DataMember]
         public string Title { get; set; }
-        [DataMember]
-        public DateTime Created { get; set; }
-        [DataMember]
-        public DateTime LastEdited { get; set; }
 
-        public Note(){}
+        [DataMember]
+        public string CreatedRoundTrip { get; }
 
-        public Note (string title, string text, DateTime created, DateTime lastEdited)
+        [DataMember]
+        public string LastEditedRoundTrip { get; set; }
+
+        public Note (string title, string text, string created, string lastEdited)
         {
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -26,10 +26,8 @@ namespace NoteKeeperXamarin.Models
 
             Title = title;
             Text = text;
-            Created = created;
-            LastEdited = lastEdited;
+            CreatedRoundTrip = created;
+            LastEditedRoundTrip = lastEdited;
         }
-
-        
     }
 }

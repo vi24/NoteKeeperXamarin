@@ -3,6 +3,7 @@ using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
 using ReactiveUI;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
@@ -107,10 +108,6 @@ namespace NoteKeeperXamarin.ViewModels
         public IObservable<bool> CanExecuteDelete => this.WhenAnyValue(x => x.CanDelete);
 
         #endregion
-        private void OnNoteChanged(string path)
-        {
-            NoteChanged?.Invoke(this, new NoteChangedEventArgs(path));
-        }
 
         public async Task SaveNoteExecute()
         {
@@ -118,13 +115,14 @@ namespace NoteKeeperXamarin.ViewModels
             {
                 _note.Title = NoteTitleEntry;
                 _note.Text = NoteTextEditor;
-                _note.LastEdited = DateTime.Now;
-                await _noteService.SaveWithDynamicFileName(_note, _notePath);
+                _note.LastEditedRoundTrip = DateTime.UtcNow.ToString("o");
+                await _noteService.SaveNote(_note, _notePath);
             }
             else
             {
-                _note = new Note(NoteTitleEntry, NoteTextEditor, DateTime.Now, DateTime.Now);
-                _notePath = await _noteService.SaveWithDynamicFileName(_note);
+                DateTime created = DateTime.UtcNow;
+                _note = new Note(NoteTitleEntry, NoteTextEditor, created.ToString("o"), created.ToString("o"));
+                _notePath = await _noteService.SaveNote(_note);
             }
             CanDelete = true;
             UpdateNoteView();
@@ -132,7 +130,7 @@ namespace NoteKeeperXamarin.ViewModels
 
         public async Task DeleteNoteExecute()
         {
-            await _noteService.DeleteNoteFile(_notePath);
+            await _noteService.DeleteNote(_notePath);
             UpdateNoteView();
             CanDelete = false;
             await Application.Current.MainPage.Navigation.PopAsync();
@@ -144,8 +142,10 @@ namespace NoteKeeperXamarin.ViewModels
             {
                 NoteTitleEntry = _note.Title;
                 NoteTextEditor = _note.Text;
-                CreatedString = _note.Created.ToString();
-                LastEditedString = _note.LastEdited.ToString();
+                DateTime created = DateTime.Parse(_note.CreatedRoundTrip);
+                CreatedString = created.ToLocalTime().ToString("G", new CultureInfo("de-DE"));
+                DateTime lastEdited = DateTime.Parse(_note.LastEditedRoundTrip);
+                LastEditedString = lastEdited.ToLocalTime().ToString("G", new CultureInfo("de-DE"));
             }
             else
             {
@@ -154,6 +154,11 @@ namespace NoteKeeperXamarin.ViewModels
                 CreatedString = String.Empty;
                 LastEditedString = String.Empty;
             }
+        }
+
+        private void OnNoteChanged(string path)
+        {
+            NoteChanged?.Invoke(this, new NoteChangedEventArgs(path));
         }
 
         private async void OpenNoteAsync(object sender, NoteChangedEventArgs e)

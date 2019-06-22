@@ -13,7 +13,7 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".json";
         }
 
-        public async Task<T> OpenFile<T>(string path)
+        public async Task<T> Open<T>(string path)
         {
             if (!File.Exists(path))
             {
@@ -27,7 +27,7 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
-        public async Task SaveToFile<T>(T obj, string path)
+        public async Task Save<T>(T obj, string path)
         {
             using (var writer = new StreamWriter(path))
             {
@@ -36,7 +36,7 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
-        public async Task DeleteFile<T>(string path)
+        public async Task Delete<T>(string path)
         {
             await Task.Run(() => File.Delete(path));
         }

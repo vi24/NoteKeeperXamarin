@@ -16,7 +16,7 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".xml";
         }
 
-        public async Task SaveToFile<T>(T obj, string path)
+        public async Task Save<T>(T obj, string path)
         {
             _serializer = new DataContractSerializer(typeof(T));
             using (var stream = new StreamWriter(path))
@@ -28,7 +28,7 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
-        public async Task<T> OpenFile<T>(string path)
+        public async Task<T> Open<T>(string path)
         {
             if (!File.Exists(path))
             {
@@ -42,7 +42,7 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
-        public async Task DeleteFile<T>(string path)
+        public async Task Delete<T>(string path)
         {
             await Task.Run(() => File.Delete(path));
         }

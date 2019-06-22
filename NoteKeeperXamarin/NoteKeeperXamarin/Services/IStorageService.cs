@@ -6,8 +6,8 @@ namespace NoteKeeperXamarin.Services
     public interface IStorageService
     {
         string FileExtensionName { get; }
-        Task SaveToFile<T>(T obj, string path);
-        Task<T> OpenFile <T> (string path);
-        Task DeleteFile<T>(string path);
+        Task Save<T>(T obj, string path);
+        Task<T> Open<T>(string path);
+        Task Delete<T>(string path);
     }
 }
