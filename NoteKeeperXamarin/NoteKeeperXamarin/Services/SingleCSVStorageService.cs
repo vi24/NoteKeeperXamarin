@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace NoteKeeperXamarin.Services
 {
@@ -16,7 +17,7 @@ namespace NoteKeeperXamarin.Services
         public SingleCSVStorageService()
         {
             FileExtensionName = ".csv";
-            string path = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\SerializedNotes");
+            string path = Path.Combine(FileSystem.AppDataDirectory, "SerializedNotes");
             string filename = "notes";
             _filePath = Path.Combine(path, filename + FileExtensionName);         
             if (!Directory.Exists(path))
@@ -162,5 +163,31 @@ namespace NoteKeeperXamarin.Services
                 throw;
             }
         }
+        
+        private async Task<string[]> GetAllRecordsIDs<T>()
+        {
+            if (!File.Exists(_filePath)) return new string[0];
+            try
+            {
+                int index;
+                List<string> lines = await Task.Run(() => File.ReadAllLines(_filePath).ToList());
+                List<string> line = lines[0].Split(';').ToList();
+                List<string> records = new List<string>();
+                if (!line.Contains(_idname)) return new string[0];
+                index = line.IndexOf(_idname);
+                foreach (string record in lines)
+                {
+                    line = record.Split(';').ToList();
+                    records.Add(record[index].ToString());
+                }
+                return records.ToArray();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
     }
 }

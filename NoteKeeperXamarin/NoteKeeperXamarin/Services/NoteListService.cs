@@ -12,7 +12,6 @@ namespace NoteKeeperXamarin.Services
     public class NoteListService : INoteService
     {
         private readonly IStorageService _storageService;
-        private readonly string _noteDirectory;
         private List<Note> _notes;
 
         public event EventHandler NotesChanged;
@@ -55,6 +54,10 @@ namespace NoteKeeperXamarin.Services
             NotesChanged?.Invoke(this, EventArgs.Empty);
         }
 
-
+        public Task<List<string>> GetAllExistingNotesIDs()
+        {
+            List<string> list = new List<string>();
+            return Task.FromResult(list);
+        }
     }
 }

@@ -5,7 +5,6 @@ using ReactiveUI;
 using Splat;
 using System;
 using System.Globalization;
-using System.IO;
 using System.Reactive;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -25,15 +24,15 @@ namespace NoteKeeperXamarin.ViewModels
         private event NoteChangedEventHandler NoteChanged;
         private delegate void NoteChangedEventHandler(object sender, NoteChangedEventArgs args);
 
-        public NoteViewModel(INoteService noteService = null, string path = null)
+        public NoteViewModel(INoteService noteService = null, string noteID = null)
         {
             _noteService = noteService ?? Locator.Current.GetService<INoteService>();
             SaveNote = ReactiveCommand.CreateFromTask(SaveNoteExecute, CanExecuteSave);
             DeleteNote = ReactiveCommand.CreateFromTask(DeleteNoteExecute, CanExecuteDelete);
             NoteChanged += OpenNoteAsync;
-            if (path != null)
+            if (noteID != null)
             {
-                OnNoteChanged(path);
+                OnNoteChanged(noteID);
             }
             UpdateNoteView();
         }
@@ -157,9 +156,9 @@ namespace NoteKeeperXamarin.ViewModels
             }
         }
 
-        private void OnNoteChanged(string path)
+        private void OnNoteChanged(string noteID)
         {
-            NoteChanged?.Invoke(this, new NoteChangedEventArgs(path));
+            NoteChanged?.Invoke(this, new NoteChangedEventArgs(noteID));
         }
 
         private async void OpenNoteAsync(object sender, NoteChangedEventArgs e)

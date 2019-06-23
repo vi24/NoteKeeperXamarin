@@ -1,6 +1,7 @@
 ﻿using NoteKeeperXamarin.Models;
 using Splat;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -42,11 +43,16 @@ namespace NoteKeeperXamarin.Services
             NotesChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public async Task<string> SaveNote(Note note, string path = null)
+        public async Task<string> SaveNote(Note note, string filename = null)
         {
-            if(path == null)
+            string path;
+            if(filename == null)
             {
                 path = GetFullPathOfDirectoryAndFileName(note);
+            }
+            else
+            {
+                path = Path.Combine(_noteFilesDirectory, filename);
             }
             await _storageService.Save<Note>(note, path);
             OnNotesChanged();
@@ -55,28 +61,36 @@ namespace NoteKeeperXamarin.Services
         /// <summary>
         /// Opens a <see cref="Note"/> for a given path
         /// </summary>
-        /// <param name="fullPathName"></param>
+        /// <param name="filename"></param>
         /// <returns>A note</returns>
         /// <returns><see cref="FileNotFoundException"/> if File not found</returns>
-        public async Task<Note> OpenNote(string fullPathName)
+        public async Task<Note> OpenNote(string filename)
         {
-            if (String.IsNullOrEmpty(fullPathName))
+            if (String.IsNullOrEmpty(filename))
             {
-                throw new ArgumentNullException(nameof(fullPathName));
+                throw new ArgumentNullException(nameof(filename));
             }
-            return await _storageService.Open<Note>(fullPathName);
+            string path = Path.Combine(_noteFilesDirectory, filename);
+            return await _storageService.Open<Note>(path);
         }
 
-        public async Task DeleteNote(string path)
+        public async Task DeleteNote(string filename)
         {
-            if (String.IsNullOrEmpty(path)) return;
+            if (String.IsNullOrEmpty(filename)) return;
+            string path = Path.Combine(_noteFilesDirectory, filename);
             await _storageService.Delete<Note>(path);
             OnNotesChanged();
         }
 
-        public string[] GetPathsOfAllExistingNoteFiles()
+        public async Task<List<string>> GetAllExistingNotesIDs()
         {
-            return Directory.GetFiles(_noteFilesDirectory);
+            string[] paths =  await Task.Run(() => Directory.GetFiles(_noteFilesDirectory));
+            List<string> noteItemList = new List<string>();
+            for (int i = 0; i < paths.Length; i++)
+            {
+                noteItemList.Add(Path.GetFileName(paths[i]));
+            }
+            return noteItemList;
         }
 
         private string GenerateFileName(Note note)

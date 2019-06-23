@@ -12,5 +12,6 @@ namespace NoteKeeperXamarin.Services
         Task<string> SaveNote(Note note, string name = null);
         Task<Note> OpenNote(string name);
         Task DeleteNote(string name);
+        Task<List<string>> GetAllExistingNotesIDs();
     }
 }
