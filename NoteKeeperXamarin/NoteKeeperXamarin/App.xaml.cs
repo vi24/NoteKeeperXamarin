@@ -13,6 +13,7 @@ namespace NoteKeeperXamarin
         {
             InitializeComponent();
             Locator.CurrentMutable.Register(() => new CSVStorageService(), typeof(IStorageService));
+            Locator.CurrentMutable.Register(() => new NoteService(), typeof(INoteService));
             MainPage = new NavigationPage(new NoteListKeeperView());
         }
 

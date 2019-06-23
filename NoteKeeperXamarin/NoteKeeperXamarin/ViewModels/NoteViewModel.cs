@@ -2,6 +2,7 @@
 using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
 using ReactiveUI;
+using Splat;
 using System;
 using System.Globalization;
 using System.IO;
@@ -13,7 +14,7 @@ namespace NoteKeeperXamarin.ViewModels
 {
     public class NoteViewModel : ReactiveObject
     {
-        private readonly NoteService _noteService;
+        private readonly INoteService _noteService;
         private Note _note;
         private string _notePath;
         private string _noteTitle;
@@ -24,9 +25,9 @@ namespace NoteKeeperXamarin.ViewModels
         private event NoteChangedEventHandler NoteChanged;
         private delegate void NoteChangedEventHandler(object sender, NoteChangedEventArgs args);
 
-        public NoteViewModel(NoteService noteService, string path = null)
+        public NoteViewModel(INoteService noteService = null, string path = null)
         {
-            _noteService = noteService;
+            _noteService = noteService ?? Locator.Current.GetService<INoteService>();
             SaveNote = ReactiveCommand.CreateFromTask(SaveNoteExecute, CanExecuteSave);
             DeleteNote = ReactiveCommand.CreateFromTask(DeleteNoteExecute, CanExecuteDelete);
             NoteChanged += OpenNoteAsync;

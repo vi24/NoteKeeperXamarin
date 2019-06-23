@@ -9,7 +9,7 @@ namespace NoteKeeperXamarin.Services
     public interface INoteService
     {
         event EventHandler NotesChanged;
-        Task SaveNote(Note note, string name = null);
+        Task<string> SaveNote(Note note, string name = null);
         Task<Note> OpenNote(string name);
         Task DeleteNote(string name);
     }

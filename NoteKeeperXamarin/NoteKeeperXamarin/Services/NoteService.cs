@@ -42,18 +42,15 @@ namespace NoteKeeperXamarin.Services
             NotesChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public async Task<string> SaveNote(Note note)
+        public async Task<string> SaveNote(Note note, string path = null)
         {
-            string path = GetFullPathOfDirectoryAndFileName(note);
+            if(path == null)
+            {
+                path = GetFullPathOfDirectoryAndFileName(note);
+            }
             await _storageService.Save<Note>(note, path);
             OnNotesChanged();
             return path;
-        }
-
-        public async Task SaveNote(Note note, string path)
-        {
-            await _storageService.Save<Note>(note, path);
-            OnNotesChanged();
         }
         /// <summary>
         /// Opens a <see cref="Note"/> for a given path
