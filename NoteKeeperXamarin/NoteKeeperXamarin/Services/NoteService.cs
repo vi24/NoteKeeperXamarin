@@ -38,11 +38,6 @@ namespace NoteKeeperXamarin.Services
             Directory.CreateDirectory(_noteFilesDirectory);
         }
 
-        private void OnNotesChanged()
-        {
-            NotesChanged?.Invoke(this, EventArgs.Empty);
-        }
-
         public async Task<string> SaveNote(Note note, string filename = null)
         {
             string path;
@@ -104,6 +99,11 @@ namespace NoteKeeperXamarin.Services
         {
             if (note == null) return String.Empty;
             return Path.Combine(_noteFilesDirectory, GenerateFileName(note));
+        }
+
+        private void OnNotesChanged()
+        {
+            NotesChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

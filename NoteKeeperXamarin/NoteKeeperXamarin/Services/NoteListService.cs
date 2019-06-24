@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using NoteKeeperXamarin.Models;
 using Splat;
-using Xamarin.Essentials;
 
 namespace NoteKeeperXamarin.Services
 {
@@ -43,10 +43,29 @@ namespace NoteKeeperXamarin.Services
             {
                 throw new ArgumentNullException(nameof(note));
             }
+            if (name == null)
+            {
+                name = GenerateIDName(note);
+            }
             await _storageService.Save<Note>(note, name);
             OnNotesChanged();
-            if (name == null) return String.Empty;
             return name;
+        }
+
+
+        public async Task<List<string>> GetAllExistingNotesIDs()
+        {
+            if(_storageService is SingleCSVStorageService)
+            {
+                SingleCSVStorageService storageService = (SingleCSVStorageService)_storageService;
+                string [] records = await storageService.GetAllRecordsIDs<Note>();
+                return records.ToList();
+            }
+            else
+            {
+                List<string> list = new List<string>();
+                return list;
+            }
         }
 
         private void OnNotesChanged()
@@ -54,10 +73,11 @@ namespace NoteKeeperXamarin.Services
             NotesChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public Task<List<string>> GetAllExistingNotesIDs()
+        private string GenerateIDName(Note note)
         {
-            List<string> list = new List<string>();
-            return Task.FromResult(list);
+            if (note == null) return String.Empty;
+            DateTime dateTime = DateTime.Parse(note.CreatedRoundTrip, null, DateTimeStyles.RoundtripKind);
+            return Regex.Replace(note.Title, @"\s+", "") + dateTime.ToFileTime();
         }
     }
 }

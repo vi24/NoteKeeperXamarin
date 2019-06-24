@@ -35,12 +35,12 @@ namespace NoteKeeperXamarin.Services
             {
                 int index;
                 List<string> lines = await Task.Run(() => File.ReadAllLines(_filePath).ToList());
-                List<string> line = lines[0].Split(';').ToList();
+                List<string> line = lines[0].Split(',').ToList();
                 if (!line.Contains(_idname)) return;
                 index = line.IndexOf(_idname);
                 foreach (string record in lines)
                 {
-                    line = record.Split(';').ToList();
+                    line = record.Split(',').ToList();
                     if (line[0].ToString() == name)
                     {
                         lines.Remove(record);
@@ -119,6 +119,33 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
+        public async Task<string[]> GetAllRecordsIDs<T>()
+        {
+            if (!File.Exists(_filePath)) return new string[0];
+            try
+            {
+                int index;
+                List<string> lines = await Task.Run(() => File.ReadAllLines(_filePath).ToList());
+                List<string> line = lines[0].Split(',').ToList();
+                List<string> records = new List<string>();
+                if (!line.Contains(_idname)) return new string[0];
+                index = line.IndexOf(_idname);
+                foreach (string record in lines)
+                {
+                    line = record.Split(',').ToList();
+                    if(line[index] != _idname)
+                    {
+                        records.Add(line[index].ToString());
+                    }
+                }
+                return records.ToArray();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         private async Task WriteHeaders<T>(IList<PropertyInfo> props)
         {
             if (File.Exists(_filePath)) return;
@@ -164,30 +191,7 @@ namespace NoteKeeperXamarin.Services
             }
         }
         
-        private async Task<string[]> GetAllRecordsIDs<T>()
-        {
-            if (!File.Exists(_filePath)) return new string[0];
-            try
-            {
-                int index;
-                List<string> lines = await Task.Run(() => File.ReadAllLines(_filePath).ToList());
-                List<string> line = lines[0].Split(';').ToList();
-                List<string> records = new List<string>();
-                if (!line.Contains(_idname)) return new string[0];
-                index = line.IndexOf(_idname);
-                foreach (string record in lines)
-                {
-                    line = record.Split(';').ToList();
-                    records.Add(record[index].ToString());
-                }
-                return records.ToArray();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-        }
+        
 
     }
 }
