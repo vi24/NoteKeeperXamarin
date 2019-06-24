@@ -6,6 +6,7 @@ using Splat;
 using System;
 using System.Globalization;
 using System.Reactive;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -104,9 +105,8 @@ namespace NoteKeeperXamarin.ViewModels
 
         public ReactiveCommand<Unit, Unit> SaveNote { get; }
         public ReactiveCommand<Unit, Unit> DeleteNote { get; }
-        public IObservable<bool> CanExecuteSave => this.WhenAnyValue(x => x.NoteTitleEntry, (NoteTitleEntry) => !string.IsNullOrEmpty(NoteTitleEntry));
+        public IObservable<bool> CanExecuteSave => this.WhenAnyValue(x => x.NoteTitleEntry, (NoteTitleEntry) => (!string.IsNullOrEmpty(NoteTitleEntry) && new Regex("^[a-zA-Z0-9äöüÄÖÜ ]*$").IsMatch(NoteTitleEntry)));
         public IObservable<bool> CanExecuteDelete => this.WhenAnyValue(x => x.CanDelete);
-
         #endregion
 
         public async Task SaveNoteExecute()

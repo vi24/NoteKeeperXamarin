@@ -53,6 +53,7 @@ namespace NoteKeeperXamarin.Services
             OnNotesChanged();
             return path;
         }
+
         /// <summary>
         /// Opens a <see cref="Note"/> for a given path
         /// </summary>
