@@ -11,13 +11,17 @@ namespace NoteKeeperXamarin.Services
 {
     public class SingleCSVStorageService : IStorageService
     {
+        private readonly char _delimiter = ',';
         private readonly string _filePath;
         private readonly string _idname = "UniqueName";
         
-        public SingleCSVStorageService()
+        public SingleCSVStorageService(string path = null)
         {
             FileExtensionName = ".csv";
-            string path = Path.Combine(FileSystem.AppDataDirectory, "SerializedNotes");
+            if(path == null)
+            {
+                path = Path.Combine(FileSystem.AppDataDirectory, "SerializedNotes");
+            }
             string filename = "notes";
             _filePath = Path.Combine(path, filename + FileExtensionName);         
             if (!Directory.Exists(path))
@@ -35,12 +39,12 @@ namespace NoteKeeperXamarin.Services
             {
                 int index;
                 List<string> lines = await Task.Run(() => File.ReadAllLines(_filePath).ToList());
-                List<string> line = lines[0].Split(',').ToList();
+                List<string> line = lines[0].Split(_delimiter).ToList();
                 if (!line.Contains(_idname)) return;
                 index = line.IndexOf(_idname);
                 foreach (string record in lines)
                 {
-                    line = record.Split(',').ToList();
+                    line = record.Split(_delimiter).ToList();
                     if (line[0].ToString() == name)
                     {
                         lines.Remove(record);
@@ -66,6 +70,7 @@ namespace NoteKeeperXamarin.Services
                 {
                     using (var csv = new CsvReader(reader))
                     {
+                        csv.Configuration.Delimiter = _delimiter.ToString();
                         csv.Read();
                         csv.ReadHeader();
                         csv.Configuration.HasHeaderRecord = true;
@@ -103,7 +108,7 @@ namespace NoteKeeperXamarin.Services
                 {
                     using (var csvWriter = new CsvWriter(writer))
                     {
-
+                        csvWriter.Configuration.Delimiter = _delimiter.ToString();
                         await Task.Run(() => csvWriter.WriteField(name));
                         foreach (PropertyInfo prop in props)
                         {
@@ -155,6 +160,7 @@ namespace NoteKeeperXamarin.Services
                 {
                     using (var csvWriter = new CsvWriter(file))
                     {
+                        csvWriter.Configuration.Delimiter = _delimiter.ToString();
                         await Task.Run(() => csvWriter.WriteField(_idname));
                         foreach (PropertyInfo prop in props)
                         {
@@ -178,6 +184,7 @@ namespace NoteKeeperXamarin.Services
                 {
                     using (var csv = new CsvReader(reader))
                     {
+                        csv.Configuration.Delimiter = _delimiter.ToString();
                         await csv.ReadAsync();
                         csv.ReadHeader();
                         string[] headerRow = csv.Context.HeaderRecord;

@@ -28,15 +28,9 @@ namespace NoteKeeperXamarin.Models
         public string Text { get; set; }
 
         [DataMember]
-        public string CreatedRoundTrip { get; }
+        public string CreatedRoundTrip { get; private set; }
 
         [DataMember]
         public string LastEditedRoundTrip { get; set; }
-
-        private string GenerateUniqueName()
-        {
-            DateTime dateTime = DateTime.Parse(this.CreatedRoundTrip, null, DateTimeStyles.RoundtripKind);
-            return Regex.Replace(this.Title, @"\s+", "") + dateTime.ToFileTime();
-        }
     }
 }
