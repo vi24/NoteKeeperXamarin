@@ -23,7 +23,7 @@ namespace NoteKeeperXamarin.Services
             {
                 using (var writer = new XmlTextWriter(stream) { Formatting = Formatting.Indented })
                 {
-                    await Task.Run(() =>_serializer.WriteObject(writer, obj));
+                    await Task.Run(() => _serializer.WriteObject(writer, obj));
                 }
             }
         }
@@ -37,7 +37,7 @@ namespace NoteKeeperXamarin.Services
             _serializer = new DataContractSerializer(typeof(T));
             using (Stream stream = File.OpenRead(path))
             {
-                T obj = (T) await Task.Run(() => _serializer.ReadObject(stream));
+                T obj = (T)await Task.Run(() => _serializer.ReadObject(stream));
                 return obj;
             }
         }

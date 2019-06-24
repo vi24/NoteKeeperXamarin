@@ -22,7 +22,7 @@ namespace NoteKeeperXamarin.Services
             using (var reader = new StreamReader(path))
             {
                 JsonSerializer serializer = new JsonSerializer();
-                T obj = (T) await (Task.Run(() => serializer.Deserialize(reader, typeof(T))));
+                T obj = (T)await (Task.Run(() => serializer.Deserialize(reader, typeof(T))));
                 return obj;
             }
         }

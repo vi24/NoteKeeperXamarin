@@ -10,7 +10,7 @@ using Xamarin.Essentials;
 
 namespace NoteKeeperXamarin.Services
 {
-    public class NoteService: INoteService
+    public class NoteService : INoteService
     {
         private readonly IStorageService _storageService;
         private readonly string _noteFilesDirectory;
@@ -41,7 +41,7 @@ namespace NoteKeeperXamarin.Services
         public async Task<string> SaveNote(Note note, string filename = null)
         {
             string path;
-            if(filename == null)
+            if (filename == null)
             {
                 path = GetFullPathOfDirectoryAndFileName(note);
             }
@@ -79,7 +79,7 @@ namespace NoteKeeperXamarin.Services
 
         public async Task<List<string>> GetAllExistingNotesIDs()
         {
-            string[] paths =  await Task.Run(() => Directory.GetFiles(_noteFilesDirectory));
+            string[] paths = await Task.Run(() => Directory.GetFiles(_noteFilesDirectory));
             List<string> noteItemList = new List<string>();
             for (int i = 0; i < paths.Length; i++)
             {

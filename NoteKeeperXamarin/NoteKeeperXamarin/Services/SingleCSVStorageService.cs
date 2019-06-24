@@ -14,16 +14,16 @@ namespace NoteKeeperXamarin.Services
         private readonly char _delimiter = ',';
         private readonly string _filePath;
         private readonly string _idname = "UniqueName";
-        
+
         public SingleCSVStorageService(string path = null)
         {
             FileExtensionName = ".csv";
-            if(path == null)
+            if (path == null)
             {
                 path = Path.Combine(FileSystem.AppDataDirectory, "SerializedNotes");
             }
             string filename = "notes";
-            _filePath = Path.Combine(path, filename + FileExtensionName);         
+            _filePath = Path.Combine(path, filename + FileExtensionName);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -138,7 +138,7 @@ namespace NoteKeeperXamarin.Services
                 foreach (string record in lines)
                 {
                     line = record.Split(',').ToList();
-                    if(line[index] != _idname)
+                    if (line[index] != _idname)
                     {
                         records.Add(line[index].ToString());
                     }
@@ -197,8 +197,8 @@ namespace NoteKeeperXamarin.Services
                 throw;
             }
         }
-        
-        
+
+
 
     }
 }

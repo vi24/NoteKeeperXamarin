@@ -1,38 +1,40 @@
 ﻿using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
-using Splat;
 using System;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace NoteKeeperXamarin.Tests
 {
-    public class CSVServiceTest
+    public class CSVServiceTest : IDisposable
     {
         private readonly string PATH = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\SerializedNotesTest");
         private const string CSV_EXTENSION = ".csv";
 
-        private void SetUp()
+        public CSVServiceTest()
         {
             Directory.CreateDirectory(PATH);
         }
 
-        private void TearDown()
+        public void Dispose()
         {
             DirectoryInfo dInfo = new DirectoryInfo(PATH);
-            foreach (FileInfo file in dInfo.GetFiles())
-            {
-                if (!(Path.GetExtension(file.FullName) == CSV_EXTENSION)) return;
-                file.Delete();
-            }
-            Directory.Delete(PATH);
+            FileInfo[] files = dInfo.GetFiles("*" + CSV_EXTENSION)
+                     .Where(p => p.Extension == CSV_EXTENSION).ToArray();
+            foreach (FileInfo file in files)
+                try
+                {
+                    file.Attributes = FileAttributes.Normal;
+                    File.Delete(file.FullName);
+                }
+                catch { }
         }
 
         [Fact]
         public async void GivenCSVServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
         {
             //Arrange
-            SetUp();
             string combinedPathToFile = Path.Combine(PATH, "test" + CSV_EXTENSION);
             CSVStorageService storageService = new CSVStorageService();
             DateTime dateTime = DateTime.UtcNow;
@@ -45,14 +47,12 @@ namespace NoteKeeperXamarin.Tests
             Assert.Equal(expectedNote.Text, actualNote.Text);
             Assert.Equal(expectedNote.LastEditedRoundTrip, actualNote.LastEditedRoundTrip);
             Assert.Equal(expectedNote.CreatedRoundTrip, actualNote.CreatedRoundTrip);
-            TearDown();
         }
 
         [Fact]
         public async void SaveDynamicFileName_GivenCSVServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
         {
             //Arrange
-            SetUp();
             NoteService noteService = new NoteService(PATH, new CSVStorageService());
             Note note = new Note("Titel", "Foo", DateTime.UtcNow.ToString("o"), DateTime.UtcNow.ToString("o"));
             string path = await noteService.SaveNote(note);
@@ -65,7 +65,6 @@ namespace NoteKeeperXamarin.Tests
             DateTime created = DateTime.Parse(note.CreatedRoundTrip, null, System.Globalization.DateTimeStyles.RoundtripKind);
             //Assert
             Assert.True(lastedited > created);
-            TearDown();
         }
 
         [Fact]

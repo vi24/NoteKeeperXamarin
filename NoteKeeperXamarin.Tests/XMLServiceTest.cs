@@ -1,38 +1,40 @@
 ﻿using NoteKeeperXamarin.Models;
 using NoteKeeperXamarin.Services;
-using Splat;
 using System;
 using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace NoteKeeperChallenge.Tests
 {
-    public class XMLServiceTest
+    public class XMLServiceTest : IDisposable
     {
         private readonly string PATH = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\..\SerializedNotesTest");
         private const string XML_EXTENSION = ".xml";
 
-        private void SetUp()
+        public XMLServiceTest()
         {
             Directory.CreateDirectory(PATH);
         }
 
-        private void TearDown()
+        public void Dispose()
         {
             DirectoryInfo dInfo = new DirectoryInfo(PATH);
-            foreach (FileInfo file in dInfo.GetFiles())
-            {
-                if (!(Path.GetExtension(file.FullName) == XML_EXTENSION)) return;
-                file.Delete();
-            }
-            Directory.Delete(PATH);
+            FileInfo[] files = dInfo.GetFiles("*" + XML_EXTENSION)
+                     .Where(p => p.Extension == XML_EXTENSION).ToArray();
+            foreach (FileInfo file in files)
+                try
+                {
+                    file.Attributes = FileAttributes.Normal;
+                    File.Delete(file.FullName);
+                }
+                catch { }
         }
 
         [Fact]
         public async void GivenXMLServiceTitleAndText_WhenSavingNewFileAndReadingOut_ThenTheContentShouldBeTheSame()
         {
             //Arrange
-            SetUp();
             string combinedPathToFile = Path.Combine(PATH, "test" + XML_EXTENSION);
             XMLStorageService storageService = new XMLStorageService();
             DateTime dateTime = DateTime.UtcNow;
@@ -45,14 +47,12 @@ namespace NoteKeeperChallenge.Tests
             Assert.Equal(expectedNote.Text, actualNote.Text);
             Assert.Equal(expectedNote.LastEditedRoundTrip, actualNote.LastEditedRoundTrip);
             Assert.Equal(expectedNote.CreatedRoundTrip, actualNote.CreatedRoundTrip);
-            TearDown();
         }
 
         [Fact]
         public async void SaveDynamicFileName_GivenXMLServiceTitleAndText_WhenOverridingOldFile_ThenLastEditedTimeShouldBeGreaterThanCreatedTime()
         {
             //Arrange
-            SetUp();
             NoteService noteService = new NoteService(PATH, new XMLStorageService());
             Note note = new Note("Titel", "Foo", DateTime.UtcNow.ToString("o"), DateTime.UtcNow.ToString("o"));
             string path = await noteService.SaveNote(note);
@@ -65,7 +65,6 @@ namespace NoteKeeperChallenge.Tests
             DateTime created = DateTime.Parse(note.CreatedRoundTrip, null, System.Globalization.DateTimeStyles.RoundtripKind);
             //Assert
             Assert.True(lastedited > created);
-            TearDown();
         }
 
         [Fact]

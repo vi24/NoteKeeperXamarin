@@ -12,11 +12,10 @@ namespace NoteKeeperXamarin.Services
     public class NoteListService : INoteService
     {
         private readonly IStorageService _storageService;
-        private List<Note> _notes;
 
         public event EventHandler NotesChanged;
 
-        public NoteListService (IStorageService storageService = null)
+        public NoteListService(IStorageService storageService = null)
         {
             _storageService = storageService ?? Locator.Current.GetService<IStorageService>();
         }
@@ -37,7 +36,7 @@ namespace NoteKeeperXamarin.Services
             return await _storageService.Open<Note>(name);
         }
 
-        public async Task<string> SaveNote(Note note, string name=null)
+        public async Task<string> SaveNote(Note note, string name = null)
         {
             if (note == null)
             {
@@ -55,10 +54,10 @@ namespace NoteKeeperXamarin.Services
 
         public async Task<List<string>> GetAllExistingNotesIDs()
         {
-            if(_storageService is SingleCSVStorageService)
+            if (_storageService is SingleCSVStorageService)
             {
                 SingleCSVStorageService storageService = (SingleCSVStorageService)_storageService;
-                string [] records = await storageService.GetAllRecordsIDs<Note>();
+                string[] records = await storageService.GetAllRecordsIDs<Note>();
                 return records.ToList();
             }
             else

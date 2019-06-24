@@ -11,7 +11,7 @@ using Xamarin.Forms;
 
 namespace NoteKeeperXamarin.ViewModels
 {
-    public class NotesListViewModel: ReactiveObject
+    public class NotesListViewModel : ReactiveObject
     {
         private readonly INoteService _noteService;
 
@@ -21,15 +21,15 @@ namespace NoteKeeperXamarin.ViewModels
             _noteService = Locator.Current.GetService<INoteService>();
             _noteService.NotesChanged += UpdateNotesList;
             ListUpdated += UpdateNotesList;
-            AddNoteCommand = ReactiveCommand.CreateFromTask<Unit>( (Unit) => AddNoteExecuteAsync());
+            AddNoteCommand = ReactiveCommand.CreateFromTask<Unit>((Unit) => AddNoteExecuteAsync());
             OpenNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => OpenNoteExecuteAsync(filename));
             DeleteNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => DeleteNoteExecuteAsync(filename));
             OnListUpdated();
         }
 
-        public ReactiveCommand<Unit,Unit> AddNoteCommand { get; }
-        public ReactiveCommand<string ,Unit> OpenNoteCommand { get; }
-        public ReactiveCommand<string ,Unit> DeleteNoteCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddNoteCommand { get; }
+        public ReactiveCommand<string, Unit> OpenNoteCommand { get; }
+        public ReactiveCommand<string, Unit> DeleteNoteCommand { get; }
         public List<string> NoteItemList { get; private set; }
 
         private async Task DeleteNoteExecuteAsync(string name)
