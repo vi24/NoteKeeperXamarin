@@ -10,7 +10,7 @@ namespace NoteKeeperXamarin.Tests
     public class SingleCSVStorageServiceTest: IDisposable
     {
         private readonly SingleCSVStorageService singleCSVStorageService;
-        private readonly string PATH = @"C:\GitHub\NoteKeeperXamarin\SerializedNotes";
+        private readonly string PATH = @"C:\GitHub\NoteKeeperXamarin\SerializedNotesTest";
         private readonly string FILE_PATH;
 
         public SingleCSVStorageServiceTest()
@@ -35,7 +35,7 @@ namespace NoteKeeperXamarin.Tests
         }
 
         [Fact]
-        public async void OpenTest()
+        public async void GivenANote_WhenOpeningThatNote_ThenTheContentShouldBeTheSame()
         {
             await singleCSVStorageService.Save<Note>(new Note("fooTitle", "fooText", DateTime.UtcNow.ToString("o"), DateTime.UtcNow.ToString("o")), "hello");
             Note expected = new Note("fooTitle", "fooText", DateTime.UtcNow.ToString("o"), DateTime.UtcNow.ToString("o"));
@@ -44,7 +44,7 @@ namespace NoteKeeperXamarin.Tests
         }
 
         [Fact]
-        public async void DeleteTest()
+        public async void GivenTwoNotes_WhenDeletingANote_ThenThereShouldBeTwoRecords()
         {
             await singleCSVStorageService.Save<Note>(new Note("fooTitle", "fooText", DateTime.UtcNow.ToString("o"), DateTime.UtcNow.ToString("o")), "fwww");
             await singleCSVStorageService.Save<Note>(new Note("fooTitle", "fooTextWW", DateTime.UtcNow.ToString("o"), DateTime.UtcNow.ToString("o")), "hello");
