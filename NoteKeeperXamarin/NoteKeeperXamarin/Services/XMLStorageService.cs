@@ -16,19 +16,27 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".xml";
         }
 
-        public async Task Save<T>(T obj, string path)
+        public Task Save<T>(T obj, string path)
         {
             _serializer = new DataContractSerializer(typeof(T));
-            using (var stream = new StreamWriter(path))
+            try
             {
-                using (var writer = new XmlTextWriter(stream) { Formatting = Formatting.Indented })
+                using (var stream = new StreamWriter(path))
                 {
-                    await Task.Run(() => _serializer.WriteObject(writer, obj));
+                    using (var writer = new XmlTextWriter(stream) { Formatting = Formatting.Indented })
+                    {
+                        _serializer.WriteObject(writer, obj);
+                    }
                 }
             }
+            catch(DirectoryNotFoundException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return Task.CompletedTask;
         }
 
-        public async Task<T> Open<T>(string path)
+        public Task<T> Open<T>(string path)
         {
             if (!File.Exists(path))
             {
@@ -37,14 +45,22 @@ namespace NoteKeeperXamarin.Services
             _serializer = new DataContractSerializer(typeof(T));
             using (Stream stream = File.OpenRead(path))
             {
-                T obj = (T)await Task.Run(() => _serializer.ReadObject(stream));
-                return obj;
+                T obj = (T)_serializer.ReadObject(stream);
+                return Task.FromResult(obj);
             }
         }
 
-        public async Task Delete<T>(string path)
+        public Task Delete<T>(string path)
         {
-            await Task.Run(() => File.Delete(path));
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception)
+            {
+
+            }
+            return Task.CompletedTask;
         }
     }
 }

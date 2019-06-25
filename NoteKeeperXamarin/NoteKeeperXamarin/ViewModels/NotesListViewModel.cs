@@ -19,8 +19,8 @@ namespace NoteKeeperXamarin.ViewModels
         public NotesListViewModel()
         {
             _noteService = Locator.Current.GetService<INoteService>();
-            _noteService.NotesChanged += UpdateNotesList;
-            ListUpdated += UpdateNotesList;
+            _noteService.NotesChanged += async (s, e) => await UpdateNotesList(s, e);
+            ListUpdated += async (s, e) => await UpdateNotesList(s, e);
             AddNoteCommand = ReactiveCommand.CreateFromTask<Unit>((Unit) => AddNoteExecuteAsync());
             OpenNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => OpenNoteExecuteAsync(filename));
             DeleteNoteCommand = ReactiveCommand.CreateFromTask<string>((filename) => DeleteNoteExecuteAsync(filename));
@@ -49,6 +49,7 @@ namespace NoteKeeperXamarin.ViewModels
 
         private async Task AddNoteExecuteAsync()
         {
+            UnsubscribeEvents();
             await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService));
         }
 
@@ -62,11 +63,12 @@ namespace NoteKeeperXamarin.ViewModels
             }
             else
             {
+                UnsubscribeEvents();
                 await Application.Current.MainPage.Navigation.PushAsync(new NoteKeeperView(_noteService, file));
             }
         }
 
-        private async void UpdateNotesList(object sender, EventArgs e)
+        private async Task UpdateNotesList(object sender, EventArgs e)
         {
             NoteItemList = await _noteService.GetAllExistingNotesIDs();
             this.RaisePropertyChanged(nameof(NoteItemList));
@@ -76,5 +78,12 @@ namespace NoteKeeperXamarin.ViewModels
         {
             ListUpdated?.Invoke(this, EventArgs.Empty);
         }
+
+        private void UnsubscribeEvents()
+        {
+            ListUpdated -= async (s, e) => await UpdateNotesList(s, e);
+            _noteService.NotesChanged -= async (s, e) => await UpdateNotesList(s, e);
+        }
+
     }
 }

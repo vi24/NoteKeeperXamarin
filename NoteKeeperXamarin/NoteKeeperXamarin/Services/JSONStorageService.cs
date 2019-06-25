@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".json";
         }
 
-        public async Task<T> Open<T>(string path)
+        public Task<T> Open<T>(string path)
         {
             if (!File.Exists(path))
             {
@@ -21,24 +22,43 @@ namespace NoteKeeperXamarin.Services
             }
             using (var reader = new StreamReader(path))
             {
-                JsonSerializer serializer = new JsonSerializer();
-                T obj = (T)await (Task.Run(() => serializer.Deserialize(reader, typeof(T))));
-                return obj;
+                using (var jreader = new JsonTextReader(reader))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    T obj = serializer.Deserialize<T>(jreader);
+                    return Task.FromResult(obj);
+                }
             }
         }
 
-        public async Task Save<T>(T obj, string path)
+        public Task Save<T>(T obj, string path)
         {
-            using (var writer = new StreamWriter(path))
+            try
             {
-                JsonSerializer serializer = new JsonSerializer();
-                await Task.Run(() => serializer.Serialize(writer, obj));
+                using (var writer = new StreamWriter(path))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(writer, obj);
+                }
             }
+            catch (DirectoryNotFoundException e)
+            {
+                throw;
+            }
+            return Task.CompletedTask;
         }
 
-        public async Task Delete<T>(string path)
+        public Task Delete<T>(string path)
         {
-            await Task.Run(() => File.Delete(path));
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception)
+            {
+
+            }
+            return Task.CompletedTask;
         }
     }
 }

@@ -23,12 +23,14 @@ namespace NoteKeeperXamarin.Tests
             FileInfo[] files = dInfo.GetFiles("*" + CSV_EXTENSION)
                      .Where(p => p.Extension == CSV_EXTENSION).ToArray();
             foreach (FileInfo file in files)
+            {
                 try
                 {
                     file.Attributes = FileAttributes.Normal;
                     File.Delete(file.FullName);
                 }
                 catch { }
+            }
         }
 
         [Fact]

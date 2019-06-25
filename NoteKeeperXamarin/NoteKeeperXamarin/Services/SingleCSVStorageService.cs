@@ -32,15 +32,15 @@ namespace NoteKeeperXamarin.Services
 
         public string FileExtensionName { get; }
 
-        public async Task Delete<T>(string name)
+        public Task Delete<T>(string name)
         {
-            if (!File.Exists(_filePath)) return;
+            if (!File.Exists(_filePath)) return Task.CompletedTask;
             try
             {
                 int index;
-                List<string> lines = await Task.Run(() => File.ReadAllLines(_filePath).ToList());
+                List<string> lines = File.ReadAllLines(_filePath).ToList();
                 List<string> line = lines[0].Split(_delimiter).ToList();
-                if (!line.Contains(_idname)) return;
+                if (!line.Contains(_idname)) return Task.CompletedTask;
                 index = line.IndexOf(_idname);
                 foreach (string record in lines)
                 {
@@ -51,13 +51,14 @@ namespace NoteKeeperXamarin.Services
                         break;
                     }
                 }
-                await Task.Run(() => File.WriteAllText(_filePath, String.Empty));
-                await Task.Run(() => File.WriteAllLines(_filePath, lines.ToArray()));
+                File.WriteAllLines(_filePath, lines.ToArray());
             }
             catch (Exception)
             {
-                throw;
+                //Silently ignoring
             }
+            return Task.CompletedTask;
+
         }
 
         public async Task<T> Open<T>(string name)
@@ -91,7 +92,7 @@ namespace NoteKeeperXamarin.Services
             }
             catch (Exception)
             {
-                throw;
+                //Silently ignoring
             }
             return (T)Activator.CreateInstance(typeof(T), fields.ToArray());
         }
@@ -120,20 +121,20 @@ namespace NoteKeeperXamarin.Services
             }
             catch (Exception)
             {
-                throw;
+                //Silently ignoring
             }
         }
 
-        public async Task<string[]> GetAllRecordsIDs<T>()
+        public Task<string[]> GetAllRecordsIDs<T>()
         {
-            if (!File.Exists(_filePath)) return new string[0];
+            if (!File.Exists(_filePath)) return Task.FromResult(new string[0]);
             try
             {
                 int index;
-                List<string> lines = await Task.Run(() => File.ReadAllLines(_filePath).ToList());
+                List<string> lines = File.ReadAllLines(_filePath).ToList();
                 List<string> line = lines[0].Split(',').ToList();
                 List<string> records = new List<string>();
-                if (!line.Contains(_idname)) return new string[0];
+                if (!line.Contains(_idname)) return Task.FromResult(new string[0]);
                 index = line.IndexOf(_idname);
                 foreach (string record in lines)
                 {
@@ -143,7 +144,7 @@ namespace NoteKeeperXamarin.Services
                         records.Add(line[index].ToString());
                     }
                 }
-                return records.ToArray();
+                return Task.FromResult(records.ToArray());
             }
             catch (Exception)
             {
@@ -151,9 +152,9 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
-        private async Task WriteHeaders<T>(IList<PropertyInfo> props)
+        private Task WriteHeaders<T>(IList<PropertyInfo> props)
         {
-            if (File.Exists(_filePath)) return;
+            if (File.Exists(_filePath)) return Task.CompletedTask;
             try
             {
                 using (StreamWriter file = File.AppendText(_filePath))
@@ -161,10 +162,10 @@ namespace NoteKeeperXamarin.Services
                     using (var csvWriter = new CsvWriter(file))
                     {
                         csvWriter.Configuration.Delimiter = _delimiter.ToString();
-                        await Task.Run(() => csvWriter.WriteField(_idname));
+                        csvWriter.WriteField(_idname);
                         foreach (PropertyInfo prop in props)
                         {
-                            await Task.Run(() => csvWriter.WriteField(prop.Name));
+                            csvWriter.WriteField(prop.Name);
                         }
                         csvWriter.NextRecord();
                     }
@@ -172,8 +173,9 @@ namespace NoteKeeperXamarin.Services
             }
             catch (Exception)
             {
-                throw;
+                //Silently ignoring.
             }
+            return Task.CompletedTask;
         }
 
         private async Task<string[]> ReadHeaders<T>()

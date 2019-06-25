@@ -14,9 +14,17 @@ namespace NoteKeeperXamarin.Services
             FileExtensionName = ".csv";
         }
 
-        public async Task Delete<T>(string path)
+        public Task Delete<T>(string path)
         {
-            await Task.Run(() => File.Delete(path));
+            try
+            {
+                File.Delete(path);
+            }
+            catch (Exception)
+            {
+
+            }
+            return Task.CompletedTask;
         }
 
         public async Task<T> Open<T>(string path)
@@ -38,15 +46,16 @@ namespace NoteKeeperXamarin.Services
             }
         }
 
-        public async Task Save<T>(T obj, string path)
+        public Task Save<T>(T obj, string path)
         {
             using (StreamWriter file = File.CreateText(path))
             {
                 using (var csvWriter = new CsvWriter(file))
                 {
-                    await Task.Run(() => csvWriter.WriteRecord(obj));
+                     csvWriter.WriteRecord(obj);
                 }
             }
+            return Task.CompletedTask;
         }
     }
 }

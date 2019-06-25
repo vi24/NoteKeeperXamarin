@@ -105,7 +105,7 @@ namespace NoteKeeperXamarin.ViewModels
 
         public ReactiveCommand<Unit, Unit> SaveNote { get; }
         public ReactiveCommand<Unit, Unit> DeleteNote { get; }
-        public IObservable<bool> CanExecuteSave => this.WhenAnyValue(x => x.NoteTitleEntry, (NoteTitleEntry) => (!string.IsNullOrEmpty(NoteTitleEntry) && new Regex("^[a-zA-Z0-9äöüÄÖÜ ]*$").IsMatch(NoteTitleEntry)));
+        public IObservable<bool> CanExecuteSave => this.WhenAnyValue(x => x.NoteTitleEntry, (NoteTitleEntry) => (!string.IsNullOrEmpty(NoteTitleEntry) && new Regex("^[a-zA-Z0-9äöüÄÖÜéèà ]*$").IsMatch(NoteTitleEntry)));
         public IObservable<bool> CanExecuteDelete => this.WhenAnyValue(x => x.CanDelete);
         #endregion
 
@@ -143,8 +143,10 @@ namespace NoteKeeperXamarin.ViewModels
                 NoteTitleEntry = _note.Title;
                 NoteTextEditor = _note.Text;
                 DateTime created = DateTime.Parse(_note.CreatedRoundTrip);
+                DateTime.SpecifyKind(created, DateTimeKind.Utc);
                 CreatedString = created.ToLocalTime().ToString("G", new CultureInfo("de-DE"));
                 DateTime lastEdited = DateTime.Parse(_note.LastEditedRoundTrip);
+                DateTime.SpecifyKind(lastEdited, DateTimeKind.Utc);
                 LastEditedString = lastEdited.ToLocalTime().ToString("G", new CultureInfo("de-DE"));
             }
             else
