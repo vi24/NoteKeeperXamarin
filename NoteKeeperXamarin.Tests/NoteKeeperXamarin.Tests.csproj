@@ -10,7 +10,7 @@
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" />
     <PackageReference Include="Moq" Version="4.12.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="ReactiveUI.Fody" Version="9.17.11" />
     <PackageReference Include="ReactiveUI.Validation" Version="1.2.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
